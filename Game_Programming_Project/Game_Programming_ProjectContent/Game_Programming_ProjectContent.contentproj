@@ -42,22 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Fonts\" />
     <Folder Include="Sounds\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Images\Player\runningRight.PNG">
-      <Name>runningRight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Images\Player\runningLeft.PNG">
-      <Name>runningLeft</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Images\Player\idle.PNG">
@@ -76,6 +61,20 @@
   <ItemGroup>
     <Compile Include="Images\Player\attack.PNG">
       <Name>attack</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Fonts\Generic.spritefont">
+      <Name>Generic</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\Player\running.PNG">
+      <Name>running</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

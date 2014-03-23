@@ -14,13 +14,16 @@ namespace Game_Programming_Project.Sprites
     class SpriteManager : Microsoft.Xna.Framework.DrawableGameComponent
     {
 
-        //SpriteBatch object used for drawing the sprites
+        //Variables for drawing sprites
         SpriteBatch spriteBatch;
+        SpriteEffects playerEffect = SpriteEffects.None;
 
         //Player variables
         PlayerSprite player;
         Vector2 playerSpeed = new Vector2(4, 4);
 
+        //Text variables
+        SpriteFont generalText;
 
         /*
          * Constructor
@@ -30,6 +33,7 @@ namespace Game_Programming_Project.Sprites
         {
             //Child components constructed here
         }
+
 
 
         /*
@@ -42,6 +46,7 @@ namespace Game_Programming_Project.Sprites
         }
 
 
+
         /*
          * 
          */
@@ -49,13 +54,25 @@ namespace Game_Programming_Project.Sprites
         {
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
 
+            //Loading the player
             player = new PlayerSprite(
                 Game.Content.Load<Texture2D>(@"Images/Player/idle"),
                 new Vector2(200,200), new Point(65,60), 5, new Point(0,0),
                 new Point(2, 1), playerSpeed, 256);
 
+            //Loading enemies
+
+
+            //Loading sounds
+
+
+            //Loading text
+            generalText = Game.Content.Load<SpriteFont>(@"Fonts/Generic");
+
+
             base.LoadContent();
         }
+
 
 
         /*
@@ -63,7 +80,7 @@ namespace Game_Programming_Project.Sprites
          */
         public override void Update(GameTime gameTime)
         {
-
+            
             //Player is jumping
             if (player.jumping)
             {
@@ -87,21 +104,14 @@ namespace Game_Programming_Project.Sprites
                     new Point(65, 60), new Point(0, 0), new Point(2, 1), 256);
             }
 
-            //Player is running right
-            else if (player.direction.X > 1 && player.direction.X != 0 && !player.attacking &&
-                !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/runningRight")))
+            //Player is running to the left or right
+            else if (player.direction.X != 0 && !player.attacking &&
+                !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/running")))
             {
-                player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/runningRight"),
+                player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/running"),
                     new Point(45, 60), new Point(0, 0), new Point(6, 1), 75);
             }
 
-            //Player is running left
-            else if (player.direction.X < 1 && player.direction.X != 0 && !player.attacking &&
-                !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/runningLeft")))
-            {
-                player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/runningLeft"),
-                    new Point(45, 60), new Point(0, 0), new Point(6, 1), 75);
-            }
 
             //Update the player
             player.Update(gameTime, Game.Window.ClientBounds);
@@ -119,6 +129,12 @@ namespace Game_Programming_Project.Sprites
 
             // Draw the player
             player.Draw(gameTime, spriteBatch);
+
+            //Draw text
+            spriteBatch.DrawString(generalText, 
+                "Use the arrow keys or WASD to move." + Environment.NewLine + 
+                "To jump press UP, W, or Space." + Environment.NewLine +
+                "Hold down E to attack.", new Vector2(10,10), Color.Black);
 
             spriteBatch.End();
             base.Draw(gameTime);

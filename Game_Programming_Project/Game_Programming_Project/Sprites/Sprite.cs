@@ -14,6 +14,7 @@ namespace Game_Programming_Project.Sprites
         protected Point frmSize;
         Point curFrame;
         Point shtSize;
+        protected SpriteEffects spriteEffect = SpriteEffects.None;
 
         //Collision variables
         int collisionOffset;
@@ -100,7 +101,7 @@ namespace Game_Programming_Project.Sprites
                 new Rectangle(curFrame.X * frmSize.X,
                     curFrame.Y * frmSize.Y, frmSize.X, frmSize.Y),
                 Color.White, 0, Vector2.Zero,
-                1f, SpriteEffects.None, 0);
+                1f, spriteEffect, 0);
         }
 
 

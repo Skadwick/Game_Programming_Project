@@ -18,6 +18,7 @@ namespace Game_Programming_Project.Sprites
         public bool jumping = false;
         public bool attacking = false;
 
+
         /*
          * Constructor to use default frame rate
          */
@@ -63,7 +64,8 @@ namespace Game_Programming_Project.Sprites
                 }
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Down) || Keyboard.GetState().IsKeyDown(Keys.S))
-                    inputDirection.Y += 1;
+                {
+                }
 
                 return inputDirection * speed;
             }
@@ -87,6 +89,12 @@ namespace Game_Programming_Project.Sprites
                 position.X = Game.resolution.X - frmSize.X;
             if (position.Y > Game.resolution.Y - frmSize.Y)
                 position.Y = Game.resolution.Y - frmSize.Y;
+
+            //Check which direction the player is moving, and add necessary SpriteEffect.
+            if (direction.X < 0)
+                spriteEffect = SpriteEffects.FlipHorizontally;
+            else if (direction.X > 0)
+                spriteEffect = SpriteEffects.None;
 
             //Allow the player to jump
             if (Keyboard.GetState().IsKeyDown(Keys.Up) || Keyboard.GetState().IsKeyDown(Keys.W) ||
