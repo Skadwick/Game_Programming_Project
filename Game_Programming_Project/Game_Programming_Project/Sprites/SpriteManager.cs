@@ -71,24 +71,32 @@ namespace Game_Programming_Project.Sprites
                     new Point(50, 69), new Point(0, 0), new Point(1, 1), 1000);
             }
 
+            //Player is attacking
+            else if (player.attacking &&
+                !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/attack")))
+            {
+                player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/attack"),
+                    new Point(60, 67), new Point(0, 0), new Point(4, 1), 64);
+            }
+
             //Player is standing still (idle)
-            else if (player.direction.X == 0 &&
+            else if (player.direction.X == 0 && !player.attacking && !player.jumping &&
                 !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/idle")))
             {
-                player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/idle"), 
+                player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/idle"),
                     new Point(65, 60), new Point(0, 0), new Point(2, 1), 256);
             }
 
             //Player is running right
-            else if (player.direction.X > 1 && player.direction.X != 0 &&
-                !player.texture.Equals( Game.Content.Load<Texture2D>(@"Images/Player/runningRight") ))
+            else if (player.direction.X > 1 && player.direction.X != 0 && !player.attacking &&
+                !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/runningRight")))
             {
                 player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/runningRight"),
                     new Point(45, 60), new Point(0, 0), new Point(6, 1), 75);
             }
 
             //Player is running left
-            else if (player.direction.X < 1 && player.direction.X != 0 &&
+            else if (player.direction.X < 1 && player.direction.X != 0 && !player.attacking &&
                 !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/runningLeft")))
             {
                 player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/runningLeft"),

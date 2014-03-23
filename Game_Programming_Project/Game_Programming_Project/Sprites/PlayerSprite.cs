@@ -16,6 +16,7 @@ namespace Game_Programming_Project.Sprites
         float maxJump = 120;
         float curMaxJumpHeight = 0;
         public bool jumping = false;
+        public bool attacking = false;
 
         /*
          * Constructor to use default frame rate
@@ -117,6 +118,16 @@ namespace Game_Programming_Project.Sprites
             else
             {
                 position.Y -= jumpSpeed;
+            }
+
+            //Allow the player to attack
+            if (Keyboard.GetState().IsKeyDown(Keys.E))
+            {
+                attacking = true;
+            }
+            else
+            {
+                attacking = false;
             }
 
             base.Update(gameTime, clientBounds);
