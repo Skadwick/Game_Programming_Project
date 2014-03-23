@@ -21,6 +21,9 @@ namespace Game_Programming_Project
         //Sprite variables
         SpriteManager spriteManager;
 
+        //other variables
+        Texture2D background;
+
         //Default variables
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -58,6 +61,7 @@ namespace Game_Programming_Project
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            background = this.Content.Load<Texture2D>(@"Images/background1");
         }
 
 
@@ -95,7 +99,11 @@ namespace Game_Programming_Project
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
+            spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }

@@ -85,7 +85,7 @@ namespace Game_Programming_Project.Sprites
             if (player.jumping)
             {
                 player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/jumping"), 
-                    new Point(50, 69), new Point(0, 0), new Point(1, 1), 1000);
+                    new Point(50,69), new Point(0, 0), new Point(1, 1), 256);
             }
 
             //Player is attacking
@@ -101,7 +101,7 @@ namespace Game_Programming_Project.Sprites
                 !player.texture.Equals(Game.Content.Load<Texture2D>(@"Images/Player/idle")))
             {
                 player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/idle"),
-                    new Point(65, 60), new Point(0, 0), new Point(2, 1), 256);
+                    new Point(65, 60), new Point(0, 0), new Point(2, 1), 180);
             }
 
             //Player is running to the left or right
@@ -134,7 +134,7 @@ namespace Game_Programming_Project.Sprites
             spriteBatch.DrawString(generalText, 
                 "Use the arrow keys or WASD to move." + Environment.NewLine + 
                 "To jump press UP, W, or Space." + Environment.NewLine +
-                "Hold down E to attack.", new Vector2(10,10), Color.Black);
+                "Hold down E to attack.", new Vector2(10,10), Color.White);
 
             spriteBatch.End();
             base.Draw(gameTime);
