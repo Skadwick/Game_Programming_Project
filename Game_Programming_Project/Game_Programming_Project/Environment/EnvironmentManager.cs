@@ -18,8 +18,9 @@ namespace Game_Programming_Project.Environment
 
         SpriteBatch spriteBatch;
 
-        Block testBlock;
+        List<Sprite> terrainBlocks = new List<Sprite>();
 
+        Block testBlock;
 
         /*
          * Constructor
@@ -47,8 +48,27 @@ namespace Game_Programming_Project.Environment
         {
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
 
+            /*
             testBlock = new Block(Game.Content.Load<Texture2D>(@"Images/Environment/block1"),
-                new Vector2(400,515), 0, Vector2.Zero);
+                new Vector2(400,510), 0, Vector2.Zero);
+            terrainBlocks.Add(testBlock);
+             */
+
+            //Testing terrain generation within a loop
+            int ex = 900;
+            int wy = 495;
+            for(int a = 1; a <= 12; a++)
+            {
+                for (int b = a; b < 10; b++)
+                {
+                    ex -= 50;
+                    terrainBlocks.Add( new Block(Game.Content.Load<Texture2D>(@"Images/Environment/block1"),
+                        new Vector2(ex, wy), 0, Vector2.Zero));
+                }
+                ex = 900;
+                wy -= 50;
+            }
+
 
             base.LoadContent();
         }
@@ -59,38 +79,44 @@ namespace Game_Programming_Project.Environment
          */
         public override void Update(GameTime gameTime)
         {
-            testBlock.Update(gameTime, Game.Window.ClientBounds);
+            
 
-            //Check if the player is touching any of the blocks.
-            if (SpriteManager.player.collisionRect.Intersects(testBlock.collisionRect))
+            //Handling player collision with terrain blocks
+            Vector2 collisionSide = new Vector2(0, 0); //Will tell the SpriteManager where the collision occured.
+            foreach(Sprite tb in terrainBlocks)
             {
-                Vector2 collisionSide = new Vector2(0,0); //Will tell the SpriteManager where the collision occured.
-                Vector2 pPosition = SpriteManager.player.pos;
+                tb.Update(gameTime, Game.Window.ClientBounds);
 
-                //Hit top of terrain
-                if ( (SpriteManager.player.pos.Y >= (testBlock.pos.Y - SpriteManager.player.frameSize.Y)) &&
-                    (SpriteManager.player.pos.Y <= (testBlock.pos.Y - SpriteManager.player.frameSize.Y + SpriteManager.FALLSPEED)))
+                if (SpriteManager.player.collisionRect.Intersects(tb.collisionRect))
                 {
-                    collisionSide.Y = 1;
+                    
+                    Vector2 pPosition = SpriteManager.player.pos;
+
+                    //Hit top of terrain
+                    if ((SpriteManager.player.pos.Y >= (tb.pos.Y - SpriteManager.player.frameSize.Y)) &&
+                        (SpriteManager.player.pos.Y <= (tb.pos.Y - SpriteManager.player.frameSize.Y + SpriteManager.FALLSPEED)))
+                    {
+                        collisionSide.Y = 1;
+                    }
+
+                    //Hit left side of terrain
+                    else if (SpriteManager.player.pos.X >= (tb.pos.X - SpriteManager.player.frameSize.X) &&
+                        SpriteManager.player.direction.X > 0)
+                    {
+                        collisionSide.X = -1;
+                    }
+
+                    //Hit right side of terrain
+                    else if (SpriteManager.player.pos.X <= (tb.pos.X + tb.frameSize.X) &&
+                        SpriteManager.player.direction.X < 0)
+                    {
+                        collisionSide.X = 1;
+                    }
                 }
 
-                //Hit left side of terrain
-                else if( SpriteManager.player.pos.X >= (testBlock.pos.X - SpriteManager.player.frameSize.X) &&
-                    SpriteManager.player.direction.X > 0)
-                {
-                    collisionSide.X = -1;
-                }
-
-                //Hit right side of terrain
-                else if (SpriteManager.player.pos.X <= (testBlock.pos.X + testBlock.frameSize.X) &&
-                    SpriteManager.player.direction.X < 0)
-                {
-                    collisionSide.X = 1;
-                }
-
-
-                SpriteManager.player.collisionLocation = collisionSide;
             }
+            SpriteManager.player.collisionLocation = collisionSide;
+            
 
             base.Update(gameTime);
         }
@@ -103,7 +129,10 @@ namespace Game_Programming_Project.Environment
         {
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
-            testBlock.Draw(gameTime, spriteBatch);
+            foreach (Sprite tb in terrainBlocks)
+            {
+                tb.Draw(gameTime, spriteBatch);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
