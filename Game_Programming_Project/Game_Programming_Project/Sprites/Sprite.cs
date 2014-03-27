@@ -66,6 +66,25 @@ namespace Game_Programming_Project.Sprites
         }
 
 
+        /*
+         * Constructor for sprites that are not animated
+         */
+        public Sprite(Texture2D textureImage, Vector2 position, int collisionOffset, Vector2 speed)
+        {
+            this.textureImage = textureImage;
+            this.position = position;
+            this.collisionOffset = collisionOffset;
+            this.speed = speed;
+
+            this.curFrame = new Point(0,0);
+            this.shtSize = new Point(1, 1);
+            this.frmSize.X = textureImage.Width;
+            this.frmSize.Y = textureImage.Height;
+            this.millisecondsPerFrame = defaultMillisecondsPerFrame;
+
+        }
+
+
 
         /*
          * 
@@ -162,6 +181,12 @@ namespace Game_Programming_Project.Sprites
         {
             get { return shtSize; }
             set { shtSize = value; }
+        }
+
+        public virtual Vector2 pos
+        {
+            get { return position; }
+            set { position = value; }
         }
 
     }

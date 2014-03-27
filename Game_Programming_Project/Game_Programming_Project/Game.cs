@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -8,7 +9,9 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+
 using Game_Programming_Project.Sprites;
+using Game_Programming_Project.Environment;
 
 namespace Game_Programming_Project
 {
@@ -20,6 +23,9 @@ namespace Game_Programming_Project
 
         //Sprite variables
         SpriteManager spriteManager;
+
+        //Level variables
+        EnvironmentManager environmentManager;
 
         //other variables
         Texture2D background;
@@ -47,7 +53,10 @@ namespace Game_Programming_Project
         protected override void Initialize()
         {
             spriteManager = new SpriteManager(this);
+            environmentManager = new EnvironmentManager(this);
+            Components.Add(environmentManager);
             Components.Add(spriteManager);
+            
 
             base.Initialize();
         }
@@ -101,7 +110,7 @@ namespace Game_Programming_Project
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-            spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+            //spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
 
             spriteBatch.End();
             base.Draw(gameTime);

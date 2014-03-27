@@ -69,6 +69,8 @@ namespace Game_Programming_Project.Sprites
 
                 return inputDirection * speed;
             }
+
+
         }
 
 

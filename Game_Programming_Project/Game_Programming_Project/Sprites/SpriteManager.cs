@@ -16,10 +16,10 @@ namespace Game_Programming_Project.Sprites
 
         //Variables for drawing sprites
         SpriteBatch spriteBatch;
-        SpriteEffects playerEffect = SpriteEffects.None;
 
         //Player variables
-        PlayerSprite player;
+        public static PlayerSprite player;
+        public static PlayerSprite playerReference; //Used by other classes to obtain details about the player
         Vector2 playerSpeed = new Vector2(4, 4);
 
         //Text variables
@@ -59,6 +59,7 @@ namespace Game_Programming_Project.Sprites
                 Game.Content.Load<Texture2D>(@"Images/Player/idle"),
                 new Vector2(200,200), new Point(65,60), 5, new Point(0,0),
                 new Point(2, 1), playerSpeed, 256);
+            playerReference = player;
 
             //Loading enemies
 
@@ -80,6 +81,8 @@ namespace Game_Programming_Project.Sprites
          */
         public override void Update(GameTime gameTime)
         {
+
+            playerReference = player;
             
             //Player is jumping
             if (player.jumping)
@@ -132,8 +135,8 @@ namespace Game_Programming_Project.Sprites
 
             //Draw text
             spriteBatch.DrawString(generalText, 
-                "Use the arrow keys or WASD to move." + Environment.NewLine + 
-                "To jump press UP, W, or Space." + Environment.NewLine +
+                "Use the arrow keys or WASD to move." + System.Environment.NewLine +
+                "To jump press UP, W, or Space." + System.Environment.NewLine +
                 "Hold down E to attack.", new Vector2(10,10), Color.White);
 
             spriteBatch.End();
