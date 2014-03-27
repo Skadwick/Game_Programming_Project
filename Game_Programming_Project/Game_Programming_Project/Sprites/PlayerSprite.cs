@@ -15,6 +15,7 @@ namespace Game_Programming_Project.Sprites
         float jumpSpeed = 5;
         float maxJump = 120;
         float curMaxJumpHeight = 0;
+        public Vector2 collisionLocation = Vector2.Zero;
         public bool jumping = false;
         public bool attacking = false;
 
@@ -52,13 +53,15 @@ namespace Game_Programming_Project.Sprites
                 Vector2 inputDirection = Vector2.Zero;
 
                 //Check if player is moving left
-                if (Keyboard.GetState().IsKeyDown(Keys.Left) || Keyboard.GetState().IsKeyDown(Keys.A))
+                if ((Keyboard.GetState().IsKeyDown(Keys.Left) || Keyboard.GetState().IsKeyDown(Keys.A)) &&
+                    collisionLocation.X != 1)
                 {
                     inputDirection.X -= 1;
                 }
 
                 //Check if player is moving right
-                if (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D))
+                if ( (Keyboard.GetState().IsKeyDown(Keys.Right) || Keyboard.GetState().IsKeyDown(Keys.D)) &&
+                    collisionLocation.X != -1)
                 {
                     inputDirection.X += 1;
                 }
@@ -116,7 +119,8 @@ namespace Game_Programming_Project.Sprites
             }
 
             //Move the player along the Y axis as necessary
-            if (!jumping || (jumping && position.Y <= curMaxJumpHeight) )
+            if ((!jumping || (jumping && position.Y <= curMaxJumpHeight)) &&
+                collisionLocation.Y != 1)
             {
                 if (position.Y < clientBounds.Height - frmSize.Y)
                 {
@@ -125,7 +129,7 @@ namespace Game_Programming_Project.Sprites
                     curMaxJumpHeight = 0;
                 }
             }
-            else
+            else if(jumping)
             {
                 position.Y -= jumpSpeed;
             }
@@ -140,7 +144,10 @@ namespace Game_Programming_Project.Sprites
                 attacking = false;
             }
 
+            collisionLocation = Vector2.Zero;
+
             base.Update(gameTime, clientBounds);
+
         }
 
     }

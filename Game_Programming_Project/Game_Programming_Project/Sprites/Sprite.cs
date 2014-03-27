@@ -29,9 +29,9 @@ namespace Game_Programming_Project.Sprites
         protected Vector2 position;
 
         //Abstract definition of direction property
-        public abstract Vector2 direction
+        public virtual Vector2 direction
         {
-            get;
+            get { return speed * position; }
         }
 
         /*

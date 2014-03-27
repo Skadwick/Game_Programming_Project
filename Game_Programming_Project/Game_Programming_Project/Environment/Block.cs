@@ -42,27 +42,10 @@ namespace Game_Programming_Project.Environment
         {
         }
 
-        public override Vector2 direction
-        {
-            get { return speed; }
-
-        }
 
         public override void Update(GameTime gameTime, Rectangle clientBounds)
         {
-            // Move the sprite based on direction
-            position += direction;
-
-            // If sprite is off the screen, move it back within the game window
-            if (position.X < 0)
-                position.X = 0;
-            if (position.Y < 0)
-                position.Y = 0;
-            if (position.X > Game.resolution.X - frmSize.X)
-                position.X = Game.resolution.X - frmSize.X;
-            if (position.Y > Game.resolution.Y - frmSize.Y)
-                position.Y = Game.resolution.Y - frmSize.Y;
-
+            
             base.Update(gameTime, clientBounds);
         }
 

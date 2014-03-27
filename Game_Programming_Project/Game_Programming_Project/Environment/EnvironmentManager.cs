@@ -64,16 +64,31 @@ namespace Game_Programming_Project.Environment
             //Check if the player is touching any of the blocks.
             if (SpriteManager.player.collisionRect.Intersects(testBlock.collisionRect))
             {
-                Vector2 collisionSide = Vector2.Zero; //Will tell the SpriteManager where the collision occured.
+                Vector2 collisionSide = new Vector2(0,0); //Will tell the SpriteManager where the collision occured.
 
-                if(SpriteManager.player.pos.X >= (testBlock.pos.X - SpriteManager.player.frameSize.X))
+                //Hit left side of terrain
+                if( SpriteManager.player.pos.X >= (testBlock.pos.X - SpriteManager.player.frameSize.X) &&
+                    SpriteManager.player.direction.X > 0)
                 {
-                    SpriteManager.player.pos = new Vector2(testBlock.pos.X - SpriteManager.player.frameSize.X, SpriteManager.player.pos.Y);
+                    collisionSide.X = -1;
+                }
+
+                //Hit right side of terrain
+                if (SpriteManager.player.pos.X <= (testBlock.pos.X + testBlock.frameSize.X) &&
+                    SpriteManager.player.direction.X < 0)
+                {
+                    collisionSide.X = 1;
+                }
+
+                //Hit top of terrain
+                if (SpriteManager.player.pos.Y >= (testBlock.pos.Y - SpriteManager.player.frameSize.Y))
+                {
+                    collisionSide.Y = 1;
                 }
 
 
 
-                
+                SpriteManager.player.collisionLocation = collisionSide;
             }
 
             base.Update(gameTime);
