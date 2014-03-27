@@ -48,7 +48,7 @@ namespace Game_Programming_Project.Environment
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
 
             testBlock = new Block(Game.Content.Load<Texture2D>(@"Images/Environment/block1"),
-                new Vector2(400,500), 5, Vector2.Zero);
+                new Vector2(400,515), 0, Vector2.Zero);
 
             base.LoadContent();
         }
@@ -65,9 +65,17 @@ namespace Game_Programming_Project.Environment
             if (SpriteManager.player.collisionRect.Intersects(testBlock.collisionRect))
             {
                 Vector2 collisionSide = new Vector2(0,0); //Will tell the SpriteManager where the collision occured.
+                Vector2 pPosition = SpriteManager.player.pos;
+
+                //Hit top of terrain
+                if ( (SpriteManager.player.pos.Y >= (testBlock.pos.Y - SpriteManager.player.frameSize.Y)) &&
+                    (SpriteManager.player.pos.Y <= (testBlock.pos.Y - SpriteManager.player.frameSize.Y + SpriteManager.FALLSPEED)))
+                {
+                    collisionSide.Y = 1;
+                }
 
                 //Hit left side of terrain
-                if( SpriteManager.player.pos.X >= (testBlock.pos.X - SpriteManager.player.frameSize.X) &&
+                else if( SpriteManager.player.pos.X >= (testBlock.pos.X - SpriteManager.player.frameSize.X) &&
                     SpriteManager.player.direction.X > 0)
                 {
                     collisionSide.X = -1;
@@ -79,13 +87,6 @@ namespace Game_Programming_Project.Environment
                 {
                     collisionSide.X = 1;
                 }
-
-                //Hit top of terrain
-                else if (SpriteManager.player.pos.Y >= (testBlock.pos.Y - SpriteManager.player.frameSize.Y))
-                {
-                    collisionSide.Y = 1;
-                }
-
 
 
                 SpriteManager.player.collisionLocation = collisionSide;

@@ -11,7 +11,7 @@ namespace Game_Programming_Project.Sprites
     class PlayerSprite: Sprite
     {
 
-        const float FALLSPEED = 8;
+        
         float jumpSpeed = 5;
         float maxJump = 120;
         float curMaxJumpHeight = 0;
@@ -106,7 +106,7 @@ namespace Game_Programming_Project.Sprites
                 Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 //Only allow the player to jump if they are standing on the ground
-                if (position.Y == (Game.resolution.Y - frmSize.Y))
+                if (position.Y == (Game.resolution.Y - frmSize.Y) || collisionLocation.Y == 1)
                 {
                     jumping = true;
                     curMaxJumpHeight = position.Y - maxJump;
@@ -124,7 +124,7 @@ namespace Game_Programming_Project.Sprites
             {
                 if (position.Y < clientBounds.Height - frmSize.Y)
                 {
-                    position.Y += FALLSPEED;
+                    position.Y += SpriteManager.FALLSPEED;
                     jumping = false;
                     curMaxJumpHeight = 0;
                 }

@@ -25,6 +25,9 @@ namespace Game_Programming_Project.Sprites
         //Text variables
         SpriteFont generalText;
 
+        //General use variables
+        public const float FALLSPEED = 8;
+
         /*
          * Constructor
          */
@@ -57,7 +60,7 @@ namespace Game_Programming_Project.Sprites
             //Loading the player
             player = new PlayerSprite(
                 Game.Content.Load<Texture2D>(@"Images/Player/idle"),
-                new Vector2(200,200), new Point(65,60), 5, new Point(0,0),
+                new Vector2(200,200), new Point(65,60), 0, new Point(0,0),
                 new Point(2, 1), playerSpeed, 256);
             playerReference = player;
 
