@@ -74,14 +74,14 @@ namespace Game_Programming_Project.Environment
                 }
 
                 //Hit right side of terrain
-                if (SpriteManager.player.pos.X <= (testBlock.pos.X + testBlock.frameSize.X) &&
+                else if (SpriteManager.player.pos.X <= (testBlock.pos.X + testBlock.frameSize.X) &&
                     SpriteManager.player.direction.X < 0)
                 {
                     collisionSide.X = 1;
                 }
 
                 //Hit top of terrain
-                if (SpriteManager.player.pos.Y >= (testBlock.pos.Y - SpriteManager.player.frameSize.Y))
+                else if (SpriteManager.player.pos.Y >= (testBlock.pos.Y - SpriteManager.player.frameSize.Y))
                 {
                     collisionSide.Y = 1;
                 }
