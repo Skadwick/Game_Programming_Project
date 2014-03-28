@@ -1,7 +1,18 @@
+/*
+ * @Authors
+ * <Joshua Shadwick> (Joshua.Shadwick@bobcats.gcsu.edu)
+ * <Kasey Dean> (Kasey.Dean@bobcats.gcsu.edu)
+ * <Robert Strand> (robert.strand@bobcats.gcsu.edu)
+ *
+ * @Overview
+ * This video game was created by Joshua Shadwick, Kasey Dean, and Robert Strand for 
+ * CSCI 4950 - Game Programming, instructed by Dr. Jenq-Foung (JF) Yao during the
+ * Spring 2014 semester at Georgia College and State University.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -9,12 +20,14 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-
 using Game_Programming_Project.Sprites;
 using Game_Programming_Project.Environment;
 
 namespace Game_Programming_Project
 {
+    /*
+    This is the main class for our game project.
+    */
     public class Game : Microsoft.Xna.Framework.Game
     {
 
@@ -34,6 +47,10 @@ namespace Game_Programming_Project
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        /// <summary>
+        /// This is the constructor for the game class.  It initializes the graphics device, creates
+        /// the content directory, and sets the resolution of the game window.
+        /// </summary>        
         public Game()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -49,15 +66,21 @@ namespace Game_Programming_Project
         /// This is where it can query for any required services and load any non-graphic
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
+        /// 
+        /// Initilizes all necessary components.  Component classes run in sync with the game
+        /// class.  When the game class's Update() and Draw() methods are called, all component
+        /// classes also call their corresponding methods.
         /// </summary>
         protected override void Initialize()
         {
+            //Create the components
             spriteManager = new SpriteManager(this);
             environmentManager = new EnvironmentManager(this);
+
+            //Add the components
             Components.Add(environmentManager);
             Components.Add(spriteManager);
-            
-
+           
             base.Initialize();
         }
 

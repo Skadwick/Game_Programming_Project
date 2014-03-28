@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+ * @Authors
+ * <Joshua Shadwick> (Joshua.Shadwick@bobcats.gcsu.edu)
+ * <Kasey Dean> (Kasey.Dean@bobcats.gcsu.edu)
+ * <Robert Strand> (robert.strand@bobcats.gcsu.edu)
+ *
+ * @Overview
+ * This video game was created by Joshua Shadwick, Kasey Dean, and Robert Strand for 
+ * CSCI 4950 - Game Programming, instructed by Dr. Jenq-Foung (JF) Yao during the
+ * Spring 2014 semester at Georgia College and State University.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -117,7 +129,6 @@ namespace Game_Programming_Project.Sprites
                 player.setAnimation(Game.Content.Load<Texture2D>(@"Images/Player/running"),
                     new Point(45, 60), new Point(0, 0), new Point(6, 1), 75);
             }
-
 
             //Update the player
             player.Update(gameTime, Game.Window.ClientBounds);

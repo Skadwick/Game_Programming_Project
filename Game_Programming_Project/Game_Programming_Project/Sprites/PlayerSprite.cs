@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+ * @Authors
+ * <Joshua Shadwick> (Joshua.Shadwick@bobcats.gcsu.edu)
+ * <Kasey Dean> (Kasey.Dean@bobcats.gcsu.edu)
+ * <Robert Strand> (robert.strand@bobcats.gcsu.edu)
+ *
+ * @Overview
+ * This video game was created by Joshua Shadwick, Kasey Dean, and Robert Strand for 
+ * CSCI 4950 - Game Programming, instructed by Dr. Jenq-Foung (JF) Yao during the
+ * Spring 2014 semester at Georgia College and State University.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,12 +23,22 @@ namespace Game_Programming_Project.Sprites
     class PlayerSprite: Sprite
     {
 
-        
+        //Speed in the Y direction that the player can jump
         float jumpSpeed = 5;
+
+        //Max jump distance
         float maxJump = 120;
+
+        //Keeps track of the max coordinate the player can jump to
         float curMaxJumpHeight = 0;
+
+        //Keeps track of where the player hits terrain, and prevents them from moving that direction
         public Vector2 collisionLocation = Vector2.Zero;
+
+        //True when the player is jumping in the air
         public bool jumping = false;
+
+        //True when the player is attacking
         public bool attacking = false;
 
 
@@ -66,19 +88,14 @@ namespace Game_Programming_Project.Sprites
                     inputDirection.X += 1;
                 }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Down) || Keyboard.GetState().IsKeyDown(Keys.S))
-                {
-                }
-
                 return inputDirection * speed;
             }
-
-
         }
 
 
+
         /*
-         * 
+         * Logic to update various aspects of the player, when needed.
          */
         public override void Update(GameTime gameTime, Rectangle clientBounds)
         {
@@ -95,7 +112,7 @@ namespace Game_Programming_Project.Sprites
             if (position.Y > Game.resolution.Y - frmSize.Y)
                 position.Y = Game.resolution.Y - frmSize.Y;
 
-            //Check which direction the player is moving, and add necessary SpriteEffect.
+            //Flips the player's sprite depending on if they are moving to the left or the right
             if (direction.X < 0)
                 spriteEffect = SpriteEffects.FlipHorizontally;
             else if (direction.X > 0)
@@ -118,9 +135,10 @@ namespace Game_Programming_Project.Sprites
                 curMaxJumpHeight = 0;
             }
 
-            //Move the player along the Y axis as necessary
-            if ((!jumping || (jumping && position.Y <= curMaxJumpHeight)) &&
-                collisionLocation.Y != 1)
+            //Simulate gravity when not jumping, when reach max jump height, or when colliding with
+            //the bottom of a terrain block.
+            if ((!jumping || (jumping && position.Y <= curMaxJumpHeight) || 
+                (jumping && position.Y <= 0) ) && collisionLocation.Y != 1)
             {
                 if (position.Y < clientBounds.Height - frmSize.Y)
                 {
@@ -129,10 +147,12 @@ namespace Game_Programming_Project.Sprites
                     curMaxJumpHeight = 0;
                 }
             }
+            //Otherwise, allow the player to jump when jumping is true
             else if(jumping)
             {
                 position.Y -= jumpSpeed;
             }
+
 
             //Allow the player to attack
             if (Keyboard.GetState().IsKeyDown(Keys.E))
@@ -144,11 +164,10 @@ namespace Game_Programming_Project.Sprites
                 attacking = false;
             }
 
+            //Reset the collision location
             collisionLocation = Vector2.Zero;
 
             base.Update(gameTime, clientBounds);
-
         }
-
     }
 }
