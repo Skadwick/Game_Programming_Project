@@ -18,7 +18,10 @@ namespace Game_Programming_Project
         private SpriteEffects flip = SpriteEffects.None;
         private Animator sprite;
 
+        //Player movement and position
         private Vector2 MaxVelocity = new Vector2(5, 5);
+        private Vector2 direction;
+        private float previousBottom;
 
         public Vector2 Position
         {
@@ -34,6 +37,13 @@ namespace Game_Programming_Project
         }
         Vector2 velocity;
 
+        //Player state
+        public bool IsStanding
+        {
+            get { return IsStanding; }
+        }
+        bool isStanding;
+
         //Reference to the level the player is on
         public Level Level
         {
@@ -41,9 +51,22 @@ namespace Game_Programming_Project
         }
         Level level;
 
-        private Vector2 direction;
+        //Rectangle around the player
+        private Rectangle playerBounds;
+        public Rectangle PlayerRect
+        {
+            get
+            {
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + playerBounds.X;
+                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + playerBounds.Y;
 
-        private Rectangle localBounds;
+                return new Rectangle(left, top, playerBounds.Width, playerBounds.Height);
+            }
+        }
+
+        
+
+        
 
         /// <summary>
         /// Constructs a new player
@@ -75,12 +98,12 @@ namespace Game_Programming_Project
             idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Idle"), 0.1f, true);
             runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Run"), 0.1f, true);
 
-            // Calculate bounds within texture size.            
+            //Create a rectangle used to represent the player's bounds           
             int width = (int)(idleAnimation.FrameWidth * 0.4);
             int left = (idleAnimation.FrameWidth - width) / 2;
             int height = (int)(idleAnimation.FrameWidth * 0.8);
             int top = idleAnimation.FrameHeight - height;
-            localBounds = new Rectangle(left, top, width, height);
+            playerBounds = new Rectangle(left, top, width, height);
 
         }
 
@@ -139,13 +162,81 @@ namespace Game_Programming_Project
             //Apply velocity to player position
             position += Velocity;
 
-            //HandleCollisions();
+            HandleCollisions();
 
             // If the collision stopped us from moving, reset the velocity to zero.
             if (Position.X == previousPosition.X)
                 velocity.X = 0;
             if (Position.Y == previousPosition.Y)
                 velocity.Y = 0;
+        }
+
+
+
+        /// <summary>
+        /// sdfs
+        /// </summary>
+        private void HandleCollisions()
+        {
+            //Reset cool to search for ground collision
+            isStanding = false;
+
+            Rectangle bounds = PlayerRect;
+
+            //Finding neighboring blocks
+            int leftBlock = (int)Math.Floor( (float)bounds.Left / Block.Width );
+            int rightBlock = (int)Math.Ceiling(((float)bounds.Right / Block.Width)) - 1;
+            int topBlock = (int)Math.Floor((float)bounds.Top / Block.Height);
+            int bottomBlock = (int)Math.Ceiling(((float)bounds.Bottom / Block.Height)) - 1;         
+
+            //Loop through each of the possible block collisions
+            for (int y = topBlock; y <= bottomBlock; y++)
+            {
+                for (int x = leftBlock; x <= rightBlock; x++)
+                {
+                    //Checking collision type of block at the given coordinates
+                    BlockCollision blockCollision = Level.GetCollision(x, y);
+                    if (blockCollision != BlockCollision.Passable)
+                    {
+                        Rectangle blockRect = new Rectangle(x * Block.Width, y * Block.Height, 
+                            Block.Width, Block.Height);
+
+                        //Check for collision
+                        if ( bounds.Intersects(blockRect))
+                        {
+                            Vector2 depth = GameMath.CollisionDepth(bounds, blockRect);
+
+                            if (Math.Abs(depth.Y) < Math.Abs(depth.X) || blockCollision == BlockCollision.Platform)
+                            {
+                                //Check if player is on the ground
+                                if (previousBottom <= blockRect.Top)
+                                    isStanding = true;
+
+                                // Ignore platforms, unless we are on the ground
+                                if (blockCollision == BlockCollision.Impassable || IsStanding)
+                                {
+                                    //resolve the collision along the Y axis
+                                    Position = new Vector2(Position.X, Position.Y - depth.Y);
+
+                                    //Update bounds
+                                    bounds = playerBounds;
+                                }
+                            }
+                            else if (blockCollision == BlockCollision.Impassable) // Ignore platforms.
+                            {
+                                // Resolve the collision along the X axis.
+                                Position = new Vector2(Position.X - depth.X, Position.Y);
+
+                                //Update bounds
+                                bounds = playerBounds;
+                            }                            
+                        }
+                    }
+                }
+            }
+
+            // Save the new bounds bottom.
+            previousBottom = bounds.Bottom;
         }
 
 
