@@ -31,7 +31,7 @@ namespace Game_Programming_Project
     {
 
         //Game variables
-        public static Vector2 resolution = new Vector2(960, 540);
+        public static Vector2 resolution = new Vector2(1024, 576);
 
         //other variables
         Texture2D background;
