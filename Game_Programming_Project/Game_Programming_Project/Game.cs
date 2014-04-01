@@ -20,8 +20,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using Game_Programming_Project.Sprites;
-using Game_Programming_Project.Environment;
+
 
 namespace Game_Programming_Project
 {
@@ -34,18 +33,14 @@ namespace Game_Programming_Project
         //Game variables
         public static Vector2 resolution = new Vector2(960, 540);
 
-        //Sprite variables
-        SpriteManager spriteManager;
-
-        //Level variables
-        EnvironmentManager environmentManager;
-
         //other variables
         Texture2D background;
 
         //Default variables
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        Level level;
 
         /// <summary>
         /// This is the constructor for the game class.  It initializes the graphics device, creates
@@ -72,15 +67,7 @@ namespace Game_Programming_Project
         /// classes also call their corresponding methods.
         /// </summary>
         protected override void Initialize()
-        {
-            //Create the components
-            spriteManager = new SpriteManager(this);
-            environmentManager = new EnvironmentManager(this);
-
-            //Add the components
-            Components.Add(environmentManager);
-            Components.Add(spriteManager);
-           
+        {           
             base.Initialize();
         }
 
@@ -93,7 +80,8 @@ namespace Game_Programming_Project
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            background = this.Content.Load<Texture2D>(@"Images/background1");
+            //background = this.Content.Load<Texture2D>(@"Images/background1");
+            level = new Level(Services);
         }
 
 
@@ -119,6 +107,8 @@ namespace Game_Programming_Project
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            level.Update(gameTime, Keyboard.GetState());
+
             base.Update(gameTime);
         }
 
@@ -134,6 +124,7 @@ namespace Game_Programming_Project
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
             //spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+            level.Draw(gameTime, spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
