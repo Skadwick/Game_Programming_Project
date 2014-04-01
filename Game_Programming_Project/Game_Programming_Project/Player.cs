@@ -19,9 +19,10 @@ namespace Game_Programming_Project
         private Animator sprite;
 
         //Player movement and position
-        private Vector2 MaxVelocity = new Vector2(5, 5);
         private Vector2 direction;
         private float previousBottom;
+
+        private Vector2 MaxVelocity = new Vector2(5, 5);
 
         public Vector2 Position
         {
@@ -109,6 +110,8 @@ namespace Game_Programming_Project
             int top = idleAnimation.FrameHeight - height;
             playerBounds = new Rectangle(left, top, width, height);
 
+            velocity.Y = 2;
+
         }
 
 
@@ -160,7 +163,7 @@ namespace Game_Programming_Project
 
             //Update velocity
             velocity.X = direction.X * MaxVelocity.X;
-            velocity.Y = MaxVelocity.Y;
+            velocity.Y = GamePhysics.GetFallSpeed(Velocity.Y, gameTime);
             velocity.Y = Jump(velocity.Y);
 
             //velocity.Y = Jump(velocity.Y, gameTime);
