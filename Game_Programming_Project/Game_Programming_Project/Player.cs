@@ -40,7 +40,7 @@ namespace Game_Programming_Project
         //Player state
         public bool IsStanding
         {
-            get { return IsStanding; }
+            get { return isStanding; }
         }
         bool isStanding;
 
@@ -64,9 +64,7 @@ namespace Game_Programming_Project
             }
         }
 
-        
-
-        
+             
 
         /// <summary>
         /// Constructs a new player
@@ -183,6 +181,8 @@ namespace Game_Programming_Project
         {
             Rectangle bounds = PlayerRect;
 
+            isStanding = false;
+
             //Finding neighboring blocks
             int leftBlock = (int)Math.Floor( (float)bounds.Left / Block.Width );
             int rightBlock = (int)Math.Ceiling(((float)bounds.Right / Block.Width)) - 1;
@@ -198,21 +198,19 @@ namespace Game_Programming_Project
                     BlockCollision blockCollision = Level.GetCollision(x, y);
                     if (blockCollision != BlockCollision.Passable)
                     {
-                        Rectangle blockRect = new Rectangle(x * Block.Width, y * Block.Height, 
+                        Rectangle blockRect = new Rectangle(x * Block.Width, y * Block.Height,
                             Block.Width, Block.Height);
 
                         //Check for collision
-                        if ( bounds.Intersects(blockRect))
+                        Vector2 depth = GameMath.CollisionDepth(bounds, blockRect);
+                        if (depth != Vector2.Zero)
                         {
-                            Vector2 depth = GameMath.CollisionDepth(bounds, blockRect);
 
-                            if (Math.Abs(depth.Y) < Math.Abs(depth.X) || blockCollision == BlockCollision.Platform)
+                            if (Math.Abs(depth.Y) <= Math.Abs(depth.X) || blockCollision == BlockCollision.Platform)
                             {
                                 //Check if player is on the ground
                                 if (previousBottom <= blockRect.Top)
                                     isStanding = true;
-                                else
-                                    isStanding = false;
 
                                 // Ignore platforms, unless we are on the ground
                                 if (blockCollision == BlockCollision.Impassable || IsStanding)
@@ -221,17 +219,17 @@ namespace Game_Programming_Project
                                     Position = new Vector2(Position.X, Position.Y + depth.Y);
 
                                     //Update bounds
-                                    bounds = playerBounds;
+                                    bounds = PlayerRect;
                                 }
                             }
                             else if (blockCollision == BlockCollision.Impassable) // Ignore platforms.
                             {
                                 // Resolve the collision along the X axis.
-                                Position = new Vector2(Position.X - depth.X, Position.Y);
+                                Position = new Vector2(Position.X + depth.X, Position.Y);
 
                                 //Update bounds
-                                bounds = playerBounds;
-                            }                            
+                                bounds = PlayerRect;
+                            }
                         }
                     }
                 }

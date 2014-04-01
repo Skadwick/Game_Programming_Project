@@ -18,7 +18,7 @@ namespace Game_Programming_Project
             Rectangle intersectionArea = Rectangle.Intersect(rec1, rec2);
             Vector2 depth = new Vector2(intersectionArea.Width, intersectionArea.Height);
 
-            if (rec1.X > rec2.X)
+            if (rec1.X < rec2.X)
                 depth.X *= -1;
             if (rec1.Y < rec2.Y)
                 depth.Y *= -1;
