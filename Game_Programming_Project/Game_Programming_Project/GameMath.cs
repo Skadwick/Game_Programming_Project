@@ -9,6 +9,7 @@ namespace Game_Programming_Project
     class GameMath
     {
 
+        //Finds where two rectangles collide, and determines where the collision occured
         public static Vector2 CollisionDepth(Rectangle rec1, Rectangle rec2)
         {
             //If there is no intersection, then there is no intersection depth.

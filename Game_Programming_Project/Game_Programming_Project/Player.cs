@@ -44,6 +44,12 @@ namespace Game_Programming_Project
         }
         bool isStanding;
 
+        public bool IsJumping
+        {
+            get { return isJumping; }
+        }
+        bool isJumping;
+
         //Reference to the level the player is on
         public Level Level
         {
@@ -141,6 +147,7 @@ namespace Game_Programming_Project
                 direction.X += 1;
             }
 
+            isJumping = keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W);
         }
 
 
@@ -153,10 +160,8 @@ namespace Game_Programming_Project
 
             //Update velocity
             velocity.X = direction.X * MaxVelocity.X;
-            if (isStanding)
-                velocity.Y = 0;
-            else
-                velocity.Y = MaxVelocity.Y;
+            velocity.Y = MaxVelocity.Y;
+            velocity.Y = Jump(velocity.Y);
 
             //velocity.Y = Jump(velocity.Y, gameTime);
 
@@ -170,6 +175,22 @@ namespace Game_Programming_Project
                 velocity.X = 0;
             if (Position.Y == previousPosition.Y)
                 velocity.Y = 0;
+        }
+
+
+
+        /// <summary>
+        /// sdfs
+        /// </summary>
+        private float Jump(float yVel)
+        {
+            if (IsJumping)
+            {
+                yVel = -5;
+            }
+
+
+            return yVel;
         }
 
 
@@ -222,7 +243,7 @@ namespace Game_Programming_Project
                                     bounds = PlayerRect;
                                 }
                             }
-                            else if (blockCollision == BlockCollision.Impassable) // Ignore platforms.
+                            else if (blockCollision == BlockCollision.Impassable) // Ignore platforms
                             {
                                 // Resolve the collision along the X axis.
                                 Position = new Vector2(Position.X + depth.X, Position.Y);
