@@ -155,7 +155,10 @@ namespace Game_Programming_Project
 
             //Update velocity
             velocity.X = direction.X * MaxVelocity.X;
-            velocity.Y = direction.Y * MaxVelocity.Y;
+            if (isStanding)
+                velocity.Y = 0;
+            else
+                velocity.Y = MaxVelocity.Y;
 
             //velocity.Y = Jump(velocity.Y, gameTime);
 
@@ -178,9 +181,6 @@ namespace Game_Programming_Project
         /// </summary>
         private void HandleCollisions()
         {
-            //Reset cool to search for ground collision
-            isStanding = false;
-
             Rectangle bounds = PlayerRect;
 
             //Finding neighboring blocks
@@ -211,12 +211,14 @@ namespace Game_Programming_Project
                                 //Check if player is on the ground
                                 if (previousBottom <= blockRect.Top)
                                     isStanding = true;
+                                else
+                                    isStanding = false;
 
                                 // Ignore platforms, unless we are on the ground
                                 if (blockCollision == BlockCollision.Impassable || IsStanding)
                                 {
                                     //resolve the collision along the Y axis
-                                    Position = new Vector2(Position.X, Position.Y - depth.Y);
+                                    Position = new Vector2(Position.X, Position.Y + depth.Y);
 
                                     //Update bounds
                                     bounds = playerBounds;
