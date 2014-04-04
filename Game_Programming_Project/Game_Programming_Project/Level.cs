@@ -31,6 +31,9 @@ namespace Game_Programming_Project
         }
         Player player;
 
+        //Other sprite objects within the level
+        List<Enemy> enemies = new List<Enemy>();
+
         //Starting position of the player
         private Vector2 start; 
 
@@ -81,7 +84,7 @@ namespace Game_Programming_Project
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', 'x','x', 'x', 'x', 'x','x', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
                                {'-', '-', '-', '-','-', '-', '-', 'x','x', 'x', '-', '-','-', '-', '-', '-','-', '-', 'x', 'x','x', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
+                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '@'},
                                {'x', 'x', 'x', 'x','x', 'x', 'x', 'x','x', 'x', 'x', 'x','-', '-', '-', '-','x', 'x', 'x', 'x','x', 'x', 'x', 'x','x', 'x', 'x', 'x','x', 'x', 'x', 'x'},
                                {'x', 'x', 'x', 'x','x', 'x', 'x', 'x','x', 'x', 'x', 'x','-', '-', '-', '-','x', 'x', 'x', 'x','x', 'x', 'x', 'x','x', 'x', 'x', 'x','x', 'x', 'x', 'x'}
                                };
@@ -121,6 +124,10 @@ namespace Game_Programming_Project
                     //return CreateBlock("block1", BlockCollision.Impassable);
                     return CreateBlock("block1", BlockCollision.Platform);
 
+                //Enemy spawn
+                case '@':
+                    return SpawnEnemy(x, y);
+
                 //Default should only be reached if an incorrect char symbol was entered
                 default:
                     throw new Exception("Error loading block");
@@ -141,6 +148,18 @@ namespace Game_Programming_Project
 
 
         /// <summary>
+        /// Spawns an enemy at the given location, and creates an air block behind it
+        /// </summary>
+        private Block SpawnEnemy(int x, int y)
+        {
+            Vector2 pos = new Vector2(x * Block.Size.X, (y * Block.Size.Y) + Block.Size.Y);
+            enemies.Add(new Enemy(this, pos));
+            return new Block(null, BlockCollision.Passable);
+        }
+
+
+
+        /// <summary>
         /// Returns the collision type of a block within the grid system
         /// </summary>
         public BlockCollision GetCollision(int x, int y)
@@ -148,10 +167,12 @@ namespace Game_Programming_Project
             // Prevent escaping past the level ends.
             if (x < 0 || x >= BlockGridWidth)
                 return BlockCollision.Impassable;
+
             // Allow jumping past the level top and falling through the bottom.
             if (y < 0 || y >= BlockGridHeight)
                 return BlockCollision.Passable;
 
+            //Return collision type of block at [x,y]
             return blocks[x, y].Collision;
         }
 
@@ -162,8 +183,14 @@ namespace Game_Programming_Project
         /// </summary>
         public void Update(GameTime gameTime, KeyboardState keyboardState)
         {
-
+            //Update the player
             player.Update(gameTime, keyboardState);
+
+            //Update each of the enemies
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.Update(gameTime);
+            }
 
         }
 
@@ -174,11 +201,17 @@ namespace Game_Programming_Project
         /// </summary>
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            //Draw player
-            Player.Draw(gameTime, spriteBatch);
-
             //Draw each of the blocks
             DrawBlocks(spriteBatch);
+
+            //Draw each of the enemies
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.Draw(gameTime, spriteBatch);
+            }
+
+            //Draw player
+            Player.Draw(gameTime, spriteBatch);
 
         }
 

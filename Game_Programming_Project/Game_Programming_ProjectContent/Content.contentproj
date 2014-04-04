@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Levels\" />
     <Folder Include="Sounds\" />
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +106,41 @@
   <ItemGroup>
     <Compile Include="Blocks\block1.png">
       <Name>block1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\Enemy\death.png">
+      <Name>death</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\Enemy\walk.png">
+      <Name>walk</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\Enemy\muzzleflash.png">
+      <Name>muzzleflash</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\Enemy\shot.png">
+      <Name>shot</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Sprites\Enemy\idle.png">
+      <Name>idle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

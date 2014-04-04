@@ -4,27 +4,23 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Game_Programming_Project
 {
-    class Player
+    class Enemy
     {
-
         //Animations
         private Animation idleAnimation;
-        private Animation runAnimation;
-        private Animation jumpAnimation;
+        private Animation walkAnimation;
+        private Animation deathAnimation;
         private SpriteEffects flip = SpriteEffects.None;
         private Animator sprite;
 
-        //Player movement and position
+        //Enemy movement and position
         private Vector2 direction;
         private float previousBottom;
-        private int jumpTime = 0;
 
-        private Vector2 MaxVelocity = new Vector2(5, 5);
-        private int MaxJumpTime = 200; //Milliseconds
+        private Vector2 MaxVelocity = new Vector2(0.5f, 0);
 
         public Vector2 Position
         {
@@ -40,6 +36,7 @@ namespace Game_Programming_Project
         }
         Vector2 velocity;
 
+
         //Player state
         public bool IsStanding
         {
@@ -47,13 +44,7 @@ namespace Game_Programming_Project
         }
         bool isStanding;
 
-        public bool IsJumping
-        {
-            get { return isJumping; }
-        }
-        bool isJumping;
-
-        //Reference to the level the player is on
+        //Reference to the level the enemy is on
         public Level Level
         {
             get { return level; }
@@ -61,35 +52,35 @@ namespace Game_Programming_Project
         Level level;
 
         //Rectangle around the player
-        private Rectangle playerBounds;
-        public Rectangle PlayerRect
+        private Rectangle enemyBounds;
+        public Rectangle EnemyRect
         {
             get
             {
-                int left = (int)Math.Round(Position.X - sprite.Origin.X) + playerBounds.X;
-                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + playerBounds.Y;
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + enemyBounds.X;
+                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + enemyBounds.Y;
 
-                return new Rectangle(left, top, playerBounds.Width, playerBounds.Height);
+                return new Rectangle(left, top, enemyBounds.Width, enemyBounds.Height);
             }
         }
              
 
         /// <summary>
-        /// Constructs a new player
+        /// Constructs a new enemy
         /// </summary>
-        public Player(Level level, Vector2 position)
+        public Enemy(Level level, Vector2 position)
         {
             this.level = level;
             LoadContent();
-            Reset(position);
+            Spawn(position);
         }
 
 
         /// <summary>
-        /// Returns the player to life.
+        /// Spawns the enemy at the given position
         /// </summary>
         /// <param name="position">The position to come to life at.</param>
-        public void Reset(Vector2 position)
+        public void Spawn(Vector2 position)
         {
             Position = position;
             Velocity = Vector2.Zero;
@@ -98,76 +89,74 @@ namespace Game_Programming_Project
 
 
         /// <summary>
-        /// Loads the player sprite sheet and sounds.
+        /// Loads the enemy sprite sheet and sounds.
         /// </summary>
         public void LoadContent()
         {
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Idle"), 0.1f, true);
-            runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Run"), 0.1f, true);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Enemy/idle"), 0.1f, true);
+            walkAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Enemy/walk"), 0.15f, true);
+            deathAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Enemy/death"), 0.1f, false);
 
             //Create a rectangle used to represent the player's bounds           
-            int width = (int)(idleAnimation.FrameWidth * 0.4);
+            int width = (int)(idleAnimation.FrameWidth * 0.6);
             int left = (idleAnimation.FrameWidth - width) / 2;
-            int height = (int)(idleAnimation.FrameWidth * 0.8);
+            int height = (int)(idleAnimation.FrameWidth * 0.9);
             int top = idleAnimation.FrameHeight - height;
-            playerBounds = new Rectangle(left, top, width, height);
+            enemyBounds = new Rectangle(left, top, width, height);
         }
 
 
         /// <summary>
-        /// Handles input, performs physics, and animates the player sprite.
+        /// Updates various aspects of the enemy object
         /// </summary>
-        public void Update(GameTime gameTime, KeyboardState keyboardState)
+        public void Update(GameTime gameTime)
         {
-            GetInput(keyboardState);
-            MovePlayer(gameTime);
 
-            if (Velocity.X != 0) //If not 0, then must be running
-                sprite.PlayAnimation(runAnimation);
+            EnemyAI(gameTime);
+            MoveEnemy(gameTime);
+
+            //Update animations
+            if (Velocity.X != 0)
+                sprite.PlayAnimation(walkAnimation);
             else
                 sprite.PlayAnimation(idleAnimation);
-            
+
             direction = Vector2.Zero;
         }
 
 
         /// <summary>
-        /// Gets player movement and jumpinput
+        /// Handles the AI of the enemy
         /// </summary>
-        private void GetInput(KeyboardState keyboardState)
+        public void EnemyAI(GameTime gameTime)
         {
-            //Check for input for horizontal movement
-            if ((Keyboard.GetState().IsKeyDown(Keys.Left) ||
-                Keyboard.GetState().IsKeyDown(Keys.A)))
-            {
-                sprite.PlayAnimation(runAnimation);
-                direction.X -= 1;
-            }
-            else if ((Keyboard.GetState().IsKeyDown(Keys.Right) ||
-                Keyboard.GetState().IsKeyDown(Keys.D)))
-            {
-                direction.X += 1;
-            }
+            Vector2 playerPos = Level.Player.Position;
 
-            isJumping = keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W);
+            //Face the player
+            if (playerPos.X > Position.X)
+                direction.X = 1;
+            else if (playerPos.X < Position.X)
+                direction.X = -1;
+            else
+                direction.X = 0;
+
+
+
         }
 
 
         /// <summary>
-        /// Updates the players position as needed
+        /// Handles the movement of the enemy
         /// </summary>
-        public void MovePlayer(GameTime gameTime)
+        public void MoveEnemy(GameTime gameTime)
         {
             Vector2 previousPosition = Position;
 
             //Update velocity
             velocity.X = direction.X * MaxVelocity.X;
-            velocity.Y = GamePhysics.GetFallSpeed(Velocity.Y, gameTime);
+            velocity.Y = 4;
 
-            //Check for jumping
-            velocity.Y = Jump(velocity.Y, gameTime);
-
-            //Apply velocity to player position
+            //Apply velocity to enemy
             position += Velocity;
 
             HandleCollisions();
@@ -180,36 +169,20 @@ namespace Game_Programming_Project
         }
 
 
-
-        /// <summary>
-        /// sdfs
-        /// </summary>
-        private float Jump(float yVel, GameTime gameTime)
-        {
-            if (IsJumping && jumpTime < MaxJumpTime)
-            {
-                jumpTime += gameTime.ElapsedGameTime.Milliseconds;
-                yVel = -5;
-            }
-            return yVel;
-        }
-
-
-
         /// <summary>
         /// sdfs
         /// </summary>
         private void HandleCollisions()
         {
-            Rectangle bounds = PlayerRect;
+            Rectangle bounds = EnemyRect;
 
             isStanding = false;
 
             //Finding neighboring blocks
-            int leftBlock = (int)Math.Floor( (float)bounds.Left / Block.Width );
+            int leftBlock = (int)Math.Floor((float)bounds.Left / Block.Width);
             int rightBlock = (int)Math.Ceiling(((float)bounds.Right / Block.Width)) - 1;
             int topBlock = (int)Math.Floor((float)bounds.Top / Block.Height);
-            int bottomBlock = (int)Math.Ceiling(((float)bounds.Bottom / Block.Height)) - 1;         
+            int bottomBlock = (int)Math.Ceiling(((float)bounds.Bottom / Block.Height)) - 1;
 
             //Loop through each of the possible block collisions
             for (int y = topBlock; y <= bottomBlock; y++)
@@ -242,10 +215,9 @@ namespace Game_Programming_Project
                                     //resolve the collision along the Y axis
                                     Position = new Vector2(Position.X, Position.Y + depth.Y);
                                     velocity.Y = 0;
-                                    jumpTime = 0;
 
                                     //Update bounds
-                                    bounds = PlayerRect;
+                                    bounds = EnemyRect;
                                 }
                             }
 
@@ -255,7 +227,7 @@ namespace Game_Programming_Project
                                 Position = new Vector2(Position.X + depth.X, Position.Y);
 
                                 //Update bounds
-                                bounds = PlayerRect;
+                                bounds = EnemyRect;
                             }
                         }
                     }
@@ -267,13 +239,12 @@ namespace Game_Programming_Project
         }
 
 
-
         /// <summary>
-        /// Draws the animated player.
+        /// Draws the animated enemy
         /// </summary>
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            // Flip the sprite to face the way we are moving.
+            // Flip the sprite to face the way it is moving
             if (Velocity.X > 0)
                 flip = SpriteEffects.FlipHorizontally;
             else if (Velocity.X < 0)
@@ -281,7 +252,7 @@ namespace Game_Programming_Project
 
             // Draw that sprite.
             sprite.Draw(gameTime, spriteBatch, Position, flip);
-        }        
+        }
 
 
     }

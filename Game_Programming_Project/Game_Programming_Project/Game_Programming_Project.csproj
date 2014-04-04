@@ -110,6 +110,7 @@
     <Compile Include="Animation.cs" />
     <Compile Include="Animator.cs" />
     <Compile Include="Block.cs" />
+    <Compile Include="Enemy.cs" />
     <Compile Include="GameMath.cs" />
     <Compile Include="GamePhysics.cs" />
     <Compile Include="Level.cs" />
