@@ -21,8 +21,10 @@ namespace Game_Programming_Project
         //Player movement and position
         private Vector2 direction;
         private float previousBottom;
+        private int jumpTime = 0;
 
         private Vector2 MaxVelocity = new Vector2(5, 5);
+        private int MaxJumpTime = 200; //Milliseconds
 
         public Vector2 Position
         {
@@ -70,7 +72,6 @@ namespace Game_Programming_Project
                 return new Rectangle(left, top, playerBounds.Width, playerBounds.Height);
             }
         }
-
              
 
         /// <summary>
@@ -82,6 +83,7 @@ namespace Game_Programming_Project
             LoadContent();
             Reset(position);
         }
+
 
         /// <summary>
         /// Returns the player to life.
@@ -164,7 +166,8 @@ namespace Game_Programming_Project
             //Update velocity
             velocity.X = direction.X * MaxVelocity.X;
             velocity.Y = GamePhysics.GetFallSpeed(Velocity.Y, gameTime);
-            velocity.Y = Jump(velocity.Y);
+            //velocity.Y = MaxVelocity.Y;
+            velocity.Y = Jump(velocity.Y, gameTime);
 
             //velocity.Y = Jump(velocity.Y, gameTime);
 
@@ -185,14 +188,13 @@ namespace Game_Programming_Project
         /// <summary>
         /// sdfs
         /// </summary>
-        private float Jump(float yVel)
+        private float Jump(float yVel, GameTime gameTime)
         {
-            if (IsJumping)
+            if (IsJumping && jumpTime < MaxJumpTime)
             {
+                jumpTime += gameTime.ElapsedGameTime.Milliseconds;
                 yVel = -5;
             }
-
-
             return yVel;
         }
 
@@ -234,18 +236,23 @@ namespace Game_Programming_Project
                             {
                                 //Check if player is on the ground
                                 if (previousBottom <= blockRect.Top)
+                                {
                                     isStanding = true;
+                                }
 
                                 // Ignore platforms, unless we are on the ground
                                 if (blockCollision == BlockCollision.Impassable || IsStanding)
                                 {
                                     //resolve the collision along the Y axis
                                     Position = new Vector2(Position.X, Position.Y + depth.Y);
+                                    velocity.Y = 0;
+                                    jumpTime = 0;
 
                                     //Update bounds
                                     bounds = PlayerRect;
                                 }
                             }
+
                             else if (blockCollision == BlockCollision.Impassable) // Ignore platforms
                             {
                                 // Resolve the collision along the X axis.
