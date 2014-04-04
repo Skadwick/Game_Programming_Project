@@ -10,12 +10,17 @@ namespace Game_Programming_Project
     {
 
         //Constants for verticle movement
-        public const float GravityAcceleration = 18;
+        public const float GravityAcceleration = 14; //pixels per second per second (pixes / s^2)
 
 
         public static float GetFallSpeed(float yVel, GameTime time)
         {
-            return yVel + (GravityAcceleration * ((float)time.ElapsedGameTime.Milliseconds)/1000);
+            return Accelerate(yVel, GravityAcceleration, time);
+        }
+
+        public static float Accelerate(float vel, float acc, GameTime time)
+        {
+            return vel + (acc * (float)time.ElapsedGameTime.Milliseconds/1000);
         }
 
 
