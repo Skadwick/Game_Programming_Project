@@ -11,6 +11,16 @@ namespace Game_Programming_Project
     class Player
     {
 
+        //Player RPG variables
+        private const int MaxHealth = 100;
+
+        public int Health
+        {
+            get { return health; }
+        }
+        private int health;
+
+
         //Animations
         private Animation idleAnimation;
         private Animation runAnimation;
@@ -94,6 +104,7 @@ namespace Game_Programming_Project
             Position = position;
             Velocity = Vector2.Zero;
             sprite.PlayAnimation(idleAnimation);
+            health = MaxHealth;
         }
 
 
@@ -266,6 +277,14 @@ namespace Game_Programming_Project
             previousBottom = bounds.Bottom;
         }
 
+
+        /// <summary>
+        /// Draws the animated player.
+        /// </summary>
+        public void hitByAttack(Attack attack)
+        {
+            this.health -= attack.Damage;
+        }
 
 
         /// <summary>

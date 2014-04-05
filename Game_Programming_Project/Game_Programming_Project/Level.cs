@@ -84,7 +84,7 @@ namespace Game_Programming_Project
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', 'p','p', 'p', 'p', 'p','p', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
                                {'-', '-', '-', '-','-', '-', '-', 'p','p', 'p', '-', '-','-', '-', '-', '-','-', '-', 'p', 'p','p', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'@', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '@'},
+                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '@'},
                                {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'},
                                {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'}
                                };
@@ -187,6 +187,8 @@ namespace Game_Programming_Project
         /// </summary>
         public void Update(GameTime gameTime, KeyboardState keyboardState)
         {
+            List<Enemy> removeEnemies = new List<Enemy>(); //Enemies to be removed
+
             //Update the player
             player.Update(gameTime, keyboardState);
 
@@ -194,8 +196,35 @@ namespace Game_Programming_Project
             foreach (Enemy enemy in enemies)
             {
                 enemy.Update(gameTime);
+
+                List<Attack> removeAttacks = new List<Attack>();
+
+                foreach (Attack enemyAttack in enemy.attacks)
+                {
+                    //Check if the attack hit the player
+                    if (player.PlayerRect.Intersects(enemyAttack.EnemyRect))
+                    {
+                        player.hitByAttack(enemyAttack);
+                        removeAttacks.Add(enemyAttack);
+                    }
+
+                    //Check if the attack is off the screen
+                    if (enemyAttack.Position.X < 0 || enemyAttack.Position.X > Game.resolution.X ||
+                        enemyAttack.Position.Y < 0 || enemyAttack.Position.Y > Game.resolution.Y)
+                    {
+                        removeAttacks.Add(enemyAttack);
+                    }
+                }
+
+                //Delete the necessary attacks
+                foreach (Attack remove in removeAttacks)
+                    enemy.attacks.Remove(remove);
             }
 
+
+            //When the player dies, do this.
+            if (player.Health <= 0)
+                player.Reset(new Vector2(100, 100));
         }
 
 

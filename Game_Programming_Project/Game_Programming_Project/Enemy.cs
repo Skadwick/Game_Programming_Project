@@ -9,6 +9,15 @@ namespace Game_Programming_Project
 {
     class Enemy
     {
+
+        //stuff
+        private int timeBetweenAttacks = 1200;
+        private int lastAttack = 0;
+        public List<Attack> attacks = new List<Attack>();
+        private Vector2 attackPos;
+        private Vector2 attackVel = new Vector2(10,0);
+        private int attackDmg = 10;
+
         //Animations
         private Animation idleAnimation;
         private Animation walkAnimation;
@@ -115,6 +124,9 @@ namespace Game_Programming_Project
             EnemyAI(gameTime);
             MoveEnemy(gameTime);
 
+            foreach (Attack attack in attacks)
+                attack.Update(gameTime);
+
             //Update animations
             if (Velocity.X != 0)
                 sprite.PlayAnimation(walkAnimation);
@@ -128,9 +140,10 @@ namespace Game_Programming_Project
         /// <summary>
         /// Handles the AI of the enemy
         /// </summary>
-        public void EnemyAI(GameTime gameTime)
+        private void EnemyAI(GameTime gameTime)
         {
             Vector2 playerPos = Level.Player.Position;
+            lastAttack += gameTime.ElapsedGameTime.Milliseconds;
 
             //Face the player
             if (playerPos.X > Position.X)
@@ -140,7 +153,12 @@ namespace Game_Programming_Project
             else
                 direction.X = 0;
 
-
+            if (lastAttack >= timeBetweenAttacks)
+            {
+                attackVel = new Vector2(10, 0);
+                Attack();
+                lastAttack = 0;
+            }
 
         }
 
@@ -148,7 +166,7 @@ namespace Game_Programming_Project
         /// <summary>
         /// Handles the movement of the enemy
         /// </summary>
-        public void MoveEnemy(GameTime gameTime)
+        private void MoveEnemy(GameTime gameTime)
         {
             Vector2 previousPosition = Position;
 
@@ -166,6 +184,19 @@ namespace Game_Programming_Project
                 velocity.X = 0;
             if (Position.Y == previousPosition.Y)
                 velocity.Y = 0;
+        }
+
+
+        private void Attack()
+        {
+            //Create the animation to be used by the attack
+            Animation attackAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Enemy/shot"), 0.1f, true);
+
+            //Calculate position and velocity
+            attackPos = Position;
+            attackPos.Y -= 45;
+            attackVel *= direction;
+            attacks.Add(new Attack(attackAnimation, attackPos, attackVel, attackDmg));
         }
 
 
@@ -249,6 +280,9 @@ namespace Game_Programming_Project
                 flip = SpriteEffects.FlipHorizontally;
             else if (Velocity.X < 0)
                 flip = SpriteEffects.None;
+
+            foreach (Attack attack in attacks)
+                attack.Draw(gameTime, spriteBatch);
 
             // Draw that sprite.
             sprite.Draw(gameTime, spriteBatch, Position, flip);
