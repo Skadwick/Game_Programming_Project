@@ -20,11 +20,18 @@ namespace Game_Programming_Project
         }
         private int health;
 
+        public bool IsAttacking
+        {
+            get { return isAttacking; }
+        }
+        private bool isAttacking;
+
 
         //Animations
         private Animation idleAnimation;
         private Animation runAnimation;
         private Animation jumpAnimation;
+        private Animation attackAnimation;
         private SpriteEffects flip = SpriteEffects.None;
         private Animator sprite;
 
@@ -114,7 +121,8 @@ namespace Game_Programming_Project
         public void LoadContent()
         {
             idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/idle"), 0.1f, true);
-            runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/running"), 0.1f, true);
+            attackAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/attack"), 0.1f, true);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/running"), 0.12f, true);
             jumpAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/jumping"), 0.1f, true);
 
             //Create a rectangle used to represent the player's bounds           
@@ -134,7 +142,10 @@ namespace Game_Programming_Project
             GetInput(keyboardState);
             MovePlayer(gameTime);
 
-            if (isJumping)
+            //Play the proper animation
+            if (IsAttacking)
+                sprite.PlayAnimation(attackAnimation);
+            else if (isJumping)
                 sprite.PlayAnimation(jumpAnimation);
             else if (Velocity.X != 0)
                 sprite.PlayAnimation(runAnimation);
@@ -154,13 +165,22 @@ namespace Game_Programming_Project
             if ((Keyboard.GetState().IsKeyDown(Keys.Left) ||
                 Keyboard.GetState().IsKeyDown(Keys.A)))
             {
-                sprite.PlayAnimation(runAnimation);
                 direction.X -= 1;
             }
             else if ((Keyboard.GetState().IsKeyDown(Keys.Right) ||
                 Keyboard.GetState().IsKeyDown(Keys.D)))
             {
                 direction.X += 1;
+            }
+
+            //Check  if player is attacking
+            if (Keyboard.GetState().IsKeyDown(Keys.E))
+            {
+                isAttacking = true;
+            }
+            else
+            {
+                isAttacking = false;
             }
 
             isJumping = keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W);
