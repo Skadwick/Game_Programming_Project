@@ -80,7 +80,7 @@ namespace Game_Programming_Project
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            //background = this.Content.Load<Texture2D>(@"Images/background1");
+            background = this.Content.Load<Texture2D>(@"backgrounds/back_city");
             level = new Level(Services);
         }
 
@@ -123,7 +123,7 @@ namespace Game_Programming_Project
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-            //spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+            spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
             level.Draw(gameTime, spriteBatch);
 
             spriteBatch.End();

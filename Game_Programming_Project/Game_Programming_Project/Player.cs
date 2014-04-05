@@ -113,8 +113,9 @@ namespace Game_Programming_Project
         /// </summary>
         public void LoadContent()
         {
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Idle"), 0.1f, true);
-            runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Run"), 0.1f, true);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/idle"), 0.1f, true);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/running"), 0.1f, true);
+            jumpAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/jumping"), 0.1f, true);
 
             //Create a rectangle used to represent the player's bounds           
             int width = (int)(idleAnimation.FrameWidth * 0.4);
@@ -133,7 +134,9 @@ namespace Game_Programming_Project
             GetInput(keyboardState);
             MovePlayer(gameTime);
 
-            if (Velocity.X != 0) //If not 0, then must be running
+            if (isJumping)
+                sprite.PlayAnimation(jumpAnimation);
+            else if (Velocity.X != 0)
                 sprite.PlayAnimation(runAnimation);
             else
                 sprite.PlayAnimation(idleAnimation);
@@ -201,6 +204,7 @@ namespace Game_Programming_Project
             {
                 jumpTime += gameTime.ElapsedGameTime.Milliseconds;
                 yVel = -5;
+                sprite.PlayAnimation(jumpAnimation);
             }
             return yVel;
         }
