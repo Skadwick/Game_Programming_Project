@@ -206,6 +206,10 @@ namespace Game_Programming_Project
 
             HandleCollisions();
 
+            //Check if the player fell off the map
+            if (Position.Y >= Game.resolution.Y)
+                this.Reset(new Vector2(100,100));
+
             // If the collision stopped us from moving, reset the velocity to zero.
             if (Position.X == previousPosition.X)
                 velocity.X = 0;
