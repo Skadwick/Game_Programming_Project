@@ -24,6 +24,7 @@ namespace Game_Programming_Project
         private Block[,] blocks; //2D array
         const int BlockGridHeight = 18;
         const int BlockGridWidth = 32;
+        private char[,] blockMap = new char[BlockGridWidth, BlockGridHeight];
 
         //Player object which the user controls within the level
         public Player Player
@@ -45,6 +46,13 @@ namespace Game_Programming_Project
         }
         ContentManager content;
 
+        public int LevelIndex
+        {
+            get { return levelIndex; }
+            set { levelIndex = value; }
+        }
+        private int levelIndex;
+
 
         /// <summary>
         /// Constructor for the Level class.  serviceProvider is the Game.Services property from the
@@ -53,13 +61,40 @@ namespace Game_Programming_Project
         /// The constructor also begins loading the blocks needed for the level, and spawns the player at
         /// the proper location within the level.
         /// </summary>
-        public Level(IServiceProvider serviceProvider)
+        public Level(IServiceProvider serviceProvider, int lvlIndex)
         {
             content = new ContentManager(serviceProvider, "Content");
+            LevelIndex = lvlIndex;
+            LoadLevel();
             LoadBlocks();
             player = new Player(this, new Vector2(100, 100));
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void LoadLevel()
+        {
+            //Get the level layout from the file
+            string filePath = string.Format("Content/Levels/level{0}.txt", levelIndex);
+            Stream fileStream = TitleContainer.OpenStream(filePath);
+
+            using (StreamReader reader = new StreamReader(fileStream))
+            {
+                int lineIndex = 0;
+                string line = reader.ReadLine();
+                while (line != null)
+                {
+                    char[] charLine = line.ToCharArray();
+                    for (int i = 0; i < charLine.Length; i++)
+                        blockMap[i, lineIndex] = charLine[i];
+
+                    lineIndex++;
+                    line = reader.ReadLine();
+                }
+            }
+        }
 
 
         /// <summary>
@@ -69,6 +104,7 @@ namespace Game_Programming_Project
         private void LoadBlocks()
         {
             //Creating a 2D array of characters which determine which block goes where
+            /*
             char[,] blockMap = { 
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
@@ -89,6 +125,7 @@ namespace Game_Programming_Project
                                {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'},
                                {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'}
                                };
+             * */
 
             //Initialize the block grid
             blocks = new Block[BlockGridWidth, BlockGridHeight];
@@ -99,7 +136,7 @@ namespace Game_Programming_Project
                 for (int x = 0; x < BlockGridWidth; x++)
                 {
                     //Load each block
-                    char blockType = blockMap[y,x];
+                    char blockType = blockMap[x,y];
                     blocks[x, y] = LoadBlock(blockType, x, y);
                 }
             }
@@ -137,7 +174,7 @@ namespace Game_Programming_Project
 
                 //Default should only be reached if an incorrect char symbol was entered
                 default:
-                    throw new Exception("Error loading block");
+                    return new Block(null, BlockCollision.Passable);
             }
         }
         

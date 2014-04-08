@@ -93,13 +93,16 @@ namespace Game_Programming_Project
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            //Loading backgrounds
             background = this.Content.Load<Texture2D>(@"backgrounds/back_city");
             startBackground = this.Content.Load<Texture2D>(@"backgrounds/back_start");
 
+            //Loading interface elements
             cursorTexture = this.Content.Load<Texture2D>(@"Interface/Cursors/cursor");
             start = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/start"),
                 this.Content.Load<Texture2D>(@"Interface/Buttons/startHvr"), new Vector2(362, 250));
 
+            //Setting initial game state and level index
             gameState = GameState.Start;
             levelIndex = 1;
         }
@@ -165,7 +168,7 @@ namespace Game_Programming_Project
             if (start.Update(gameTime, mouseState))
             {
                 gameState = GameState.Playing;
-                level = new Level(Services);
+                level = new Level(Services, levelIndex);
             }
 
 
