@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using System.IO;
 using Microsoft.Xna.Framework.Input;
+using Game_Programming_Project.Enemies;
 
 namespace Game_Programming_Project
 {
@@ -84,7 +85,7 @@ namespace Game_Programming_Project
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', 'p','p', 'p', 'p', 'p','p', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
                                {'-', '-', '-', '-','-', '-', '-', 'p','p', 'p', '-', '-','-', '-', '-', '-','-', '-', 'p', 'p','p', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
                                {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '@'},
+                               {'%', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '@'},
                                {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'},
                                {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'}
                                };
@@ -130,7 +131,9 @@ namespace Game_Programming_Project
 
                 //Enemy spawn
                 case '@':
-                    return SpawnEnemy(x, y);
+                    return SpawnEnemy(blockType, x, y);
+                case '%':
+                    return SpawnEnemy(blockType, x, y);
 
                 //Default should only be reached if an incorrect char symbol was entered
                 default:
@@ -154,10 +157,15 @@ namespace Game_Programming_Project
         /// <summary>
         /// Spawns an enemy at the given location, and creates an air block behind it
         /// </summary>
-        private Block SpawnEnemy(int x, int y)
+        private Block SpawnEnemy(char type, int x, int y)
         {
             Vector2 pos = new Vector2(x * Block.Size.X, (y * Block.Size.Y));
-            enemies.Add(new Enemy(this, pos));
+
+            if (type == '@')
+                enemies.Add(new Enemy(this, pos));
+            else if (type == '%')
+                enemies.Add(new Mech2(this, pos));
+
             return new Block(null, BlockCollision.Passable);
         }
 
@@ -199,7 +207,7 @@ namespace Game_Programming_Project
 
                 List<Attack> removeAttacks = new List<Attack>();
 
-                foreach (Attack enemyAttack in enemy.attacks)
+                foreach (Attack enemyAttack in enemy.Attacks)
                 {
                     //Check if the attack hit the player
                     if (player.PlayerRect.Intersects(enemyAttack.EnemyRect))
@@ -218,7 +226,7 @@ namespace Game_Programming_Project
 
                 //Delete the necessary attacks
                 foreach (Attack remove in removeAttacks)
-                    enemy.attacks.Remove(remove);
+                    enemy.Attacks.Remove(remove);
             }
 
 

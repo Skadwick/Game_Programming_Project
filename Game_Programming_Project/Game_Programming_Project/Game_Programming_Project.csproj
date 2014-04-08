@@ -111,7 +111,8 @@
     <Compile Include="Animator.cs" />
     <Compile Include="Attack.cs" />
     <Compile Include="Block.cs" />
-    <Compile Include="Enemy.cs" />
+    <Compile Include="Enemies\Enemy.cs" />
+    <Compile Include="Enemies\Mech2.cs" />
     <Compile Include="GameMath.cs" />
     <Compile Include="GamePhysics.cs" />
     <Compile Include="Level.cs" />

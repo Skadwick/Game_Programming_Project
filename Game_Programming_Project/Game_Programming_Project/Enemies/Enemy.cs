@@ -5,45 +5,60 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Game_Programming_Project
+namespace Game_Programming_Project.Enemies
 {
+
+
     class Enemy
     {
 
-        //stuff
-        private int timeBetweenAttacks = 1200;
-        private int lastAttack = 0;
-        public List<Attack> attacks = new List<Attack>();
-        private Vector2 attackPos;
-        private Vector2 attackVel = new Vector2(10,0);
-        private int attackDmg = 10;
+        //Default variables
+
+
 
         //Animations
-        private Animation idleAnimation;
-        private Animation walkAnimation;
-        private Animation deathAnimation;
-        private SpriteEffects flip = SpriteEffects.None;
-        private Animator sprite;
+        protected Animation idleAnimation;
+        protected Animation walkAnimation;
+        protected Animation attackAnimation;
+        protected Animation jumpAnimation;
+        protected Animation deathAnimation;
+        protected SpriteEffects flip = SpriteEffects.None;
+        protected Animator sprite;
+
+
+        //Attack variables
+        protected Vector2 attackPos;
+        protected Vector2 attackVel = new Vector2(10, 0);
+        protected int timeBetweenAttacks = 1200;
+        protected int lastAttack = 0;
+        protected int attackDmg = 10;
+        public List<Attack> Attacks
+        {
+            get { return attacks; }
+        }
+        protected List<Attack> attacks = new List<Attack>();
+
 
         //Enemy movement and position
-        private Vector2 direction;
-        private float previousBottom;
+        protected Vector2 spawnLocation;
+        protected Vector2 direction;
+        protected float previousBottom;
 
-        private Vector2 MaxVelocity = new Vector2(0.5f, 0);
+        protected Vector2 MaxVelocity = new Vector2(0.5f, 0);
 
         public Vector2 Position
         {
             get { return position; }
             set { position = value; }
         }
-        Vector2 position;
+        protected Vector2 position;
 
         public Vector2 Velocity
         {
             get { return velocity; }
             set { velocity = value; }
         }
-        Vector2 velocity;
+        protected Vector2 velocity;
 
 
         //Player state
@@ -51,28 +66,27 @@ namespace Game_Programming_Project
         {
             get { return isStanding; }
         }
-        bool isStanding;
+        protected bool isStanding;
 
         //Reference to the level the enemy is on
         public Level Level
         {
             get { return level; }
         }
-        Level level;
+        protected Level level;
 
-        //Rectangle around the player
-        private Rectangle enemyBounds;
+        //Rectangle around the enemy
+        protected Rectangle enemyBounds;
         public Rectangle EnemyRect
         {
             get
             {
                 int left = (int)Math.Round(Position.X - sprite.Origin.X) + enemyBounds.X;
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + enemyBounds.Y;
-
                 return new Rectangle(left, top, enemyBounds.Width, enemyBounds.Height);
             }
         }
-             
+
 
         /// <summary>
         /// Constructs a new enemy
@@ -81,7 +95,8 @@ namespace Game_Programming_Project
         {
             this.level = level;
             LoadContent();
-            Spawn(position);
+            spawnLocation = position;
+            Spawn(spawnLocation);
         }
 
 
@@ -100,7 +115,7 @@ namespace Game_Programming_Project
         /// <summary>
         /// Loads the enemy sprite sheet and sounds.
         /// </summary>
-        public void LoadContent()
+        public virtual void LoadContent()
         {
             idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Enemy/idle"), 0.1f, true);
             walkAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Enemy/walk"), 0.15f, true);
@@ -140,7 +155,7 @@ namespace Game_Programming_Project
         /// <summary>
         /// Handles the AI of the enemy
         /// </summary>
-        private void EnemyAI(GameTime gameTime)
+        protected virtual void EnemyAI(GameTime gameTime)
         {
             Vector2 playerPos = Level.Player.Position;
             lastAttack += gameTime.ElapsedGameTime.Milliseconds;
@@ -166,7 +181,7 @@ namespace Game_Programming_Project
         /// <summary>
         /// Handles the movement of the enemy
         /// </summary>
-        private void MoveEnemy(GameTime gameTime)
+        protected virtual void MoveEnemy(GameTime gameTime)
         {
             Vector2 previousPosition = Position;
 
@@ -187,7 +202,7 @@ namespace Game_Programming_Project
         }
 
 
-        private void Attack()
+        protected virtual void Attack()
         {
             //Create the animation to be used by the attack
             Animation attackAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Enemy/shot"), 0.1f, true);
@@ -203,7 +218,7 @@ namespace Game_Programming_Project
         /// <summary>
         /// sdfs
         /// </summary>
-        private void HandleCollisions()
+        protected virtual void HandleCollisions()
         {
             Rectangle bounds = EnemyRect;
 
