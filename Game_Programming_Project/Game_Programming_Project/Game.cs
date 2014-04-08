@@ -48,6 +48,7 @@ namespace Game_Programming_Project
         //other variables
         Texture2D startBackground;
         Texture2D background;
+        Texture2D gameOverBackground;
 
         //Default variables
         GraphicsDeviceManager graphics;
@@ -97,6 +98,7 @@ namespace Game_Programming_Project
             //Loading backgrounds
             background = this.Content.Load<Texture2D>(@"backgrounds/back_city");
             startBackground = this.Content.Load<Texture2D>(@"backgrounds/back_start");
+            gameOverBackground = this.Content.Load<Texture2D>(@"backgrounds/back_gameover");
 
             //Loading interface elements
             cursorTexture = this.Content.Load<Texture2D>(@"Interface/Cursors/cursor");
@@ -247,7 +249,7 @@ namespace Game_Programming_Project
                     break;
 
                 case GameState.GameOver:
-                    
+                    spriteBatch.Draw(gameOverBackground, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
                     break;
 
                 default:
