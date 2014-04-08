@@ -20,6 +20,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Game_Programming_Project.Interface;
 
 
 namespace Game_Programming_Project
@@ -32,8 +33,19 @@ namespace Game_Programming_Project
 
         //Game variables
         public static Vector2 resolution = new Vector2(1024, 576);
+        GameState gameState;
+        public int levelIndex;
+
+        //Cursor variables
+        Texture2D cursorTexture;
+        Vector2 cursorPos = Vector2.Zero;
+        MouseState previousMouseState;
+
+        //Interface variables
+        Button start;
 
         //other variables
+        Texture2D startBackground;
         Texture2D background;
 
         //Default variables
@@ -80,18 +92,16 @@ namespace Game_Programming_Project
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
             background = this.Content.Load<Texture2D>(@"backgrounds/back_city");
-            level = new Level(Services);
-        }
+            startBackground = this.Content.Load<Texture2D>(@"backgrounds/back_start");
 
+            cursorTexture = this.Content.Load<Texture2D>(@"Interface/Cursors/cursor");
+            start = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/start"),
+                this.Content.Load<Texture2D>(@"Interface/Buttons/startHvr"), new Vector2(362, 250));
 
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
+            gameState = GameState.Start;
+            levelIndex = 1;
         }
 
 
@@ -103,14 +113,94 @@ namespace Game_Programming_Project
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
+            MouseState mouseState = Mouse.GetState();
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            //Update the cursor position
+            if (mouseState.X != previousMouseState.X || mouseState.Y != previousMouseState.Y)//updates cursor position
+            {
+                cursorPos = new Vector2(mouseState.X, mouseState.Y);
+            }
+            previousMouseState = mouseState;
+
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            level.Update(gameTime, Keyboard.GetState());
+            //Update the game based on which state the game is currently in
+            switch (gameState)
+            {
+                case GameState.Start:
+                    Start(gameTime, mouseState);
+                    break;
+
+                case GameState.Playing: 
+                    Playing(gameTime);
+                    break;
+
+                case GameState.Paused: 
+                    Paused(gameTime);
+                    break;
+
+                case GameState.GameOver: 
+                    GameOver(gameTime);
+                    break;
+                    
+                default:
+                    throw new Exception("Invalid GameState.");
+            }           
 
             base.Update(gameTime);
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void Start(GameTime gameTime, MouseState mouseState)
+        {
+
+            if (start.Update(gameTime, mouseState))
+            {
+                gameState = GameState.Playing;
+                level = new Level(Services);
+            }
+
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void Playing(GameTime gameTime)
+        {
+            level.Update(gameTime, Keyboard.GetState());
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void Paused(GameTime gameTime)
+        {
+
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void GameOver(GameTime gameTime)
+        {
+
+        }
+
 
 
 
@@ -123,12 +213,57 @@ namespace Game_Programming_Project
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-            spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-            level.Draw(gameTime, spriteBatch);
+
+            //Update the game based on which state the game is currently in
+            switch (gameState)
+            {
+                case GameState.Start:
+                    spriteBatch.Draw(startBackground, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    start.Draw(gameTime, spriteBatch);
+                    spriteBatch.Draw(cursorTexture, cursorPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    break;
+
+                case GameState.Playing:
+                    spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    level.Draw(gameTime, spriteBatch);
+                    break;
+
+                case GameState.Paused:
+                    
+                    break;
+
+                case GameState.GameOver:
+                    
+                    break;
+
+                default:
+                    throw new Exception("Invalid GameState.");
+            }
+
+
 
             spriteBatch.End();
             base.Draw(gameTime);
         }
 
     }
+
+
+    //Used by the game class to determine game state
+    enum GameState
+    {
+        //Waiting on the player to begin the game
+        Start = 0,
+
+        //Player currently playing game
+        Playing = 1,
+
+        //Player has paused the game
+        Paused = 2,
+
+        //Game over
+        GameOver = 3,
+    }
+
+
 }

@@ -115,6 +115,7 @@
     <Compile Include="Enemies\Mech2.cs" />
     <Compile Include="GameMath.cs" />
     <Compile Include="GamePhysics.cs" />
+    <Compile Include="Interface\Button.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
