@@ -160,7 +160,7 @@ namespace Game_Programming_Project
                 //Ground block
                 case '#':
                     //return CreateBlock("block1", BlockCollision.Impassable); //Enemies currently cannot walk left across Impassible blocks (???)
-                    return CreateBlock("block1", BlockCollision.Platform);
+                    return CreateBlock("block1", BlockCollision.Impassable);
 
                 //Platform block
                 case 'p':
@@ -196,7 +196,7 @@ namespace Game_Programming_Project
         /// </summary>
         private Block SpawnEnemy(char type, int x, int y)
         {
-            Vector2 pos = new Vector2(x * Block.Size.X, (y * Block.Size.Y));
+            Vector2 pos = new Vector2(x * Block.Size.X, ((y+1) * Block.Size.Y));
 
             if (type == '@')
                 enemies.Add(new Enemy(this, pos));

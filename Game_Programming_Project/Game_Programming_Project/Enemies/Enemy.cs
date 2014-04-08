@@ -187,7 +187,7 @@ namespace Game_Programming_Project.Enemies
 
             //Update velocity
             velocity.X = direction.X * MaxVelocity.X;
-            velocity.Y = 4;
+            velocity.Y = GamePhysics.GetFallSpeed(Velocity.Y, gameTime);
 
             //Apply velocity to enemy
             position += Velocity;
@@ -218,7 +218,7 @@ namespace Game_Programming_Project.Enemies
         /// <summary>
         /// sdfs
         /// </summary>
-        protected virtual void HandleCollisions()
+        protected void HandleCollisions()
         {
             Rectangle bounds = EnemyRect;
 
