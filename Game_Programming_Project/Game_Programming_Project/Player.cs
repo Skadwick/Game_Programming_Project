@@ -36,6 +36,7 @@ namespace Game_Programming_Project
         private Animator sprite;
 
         //Player movement and position
+        private Vector2 spawnPoint;
         private Vector2 direction;
         private float previousBottom;
         private int jumpTime = 0;
@@ -98,7 +99,8 @@ namespace Game_Programming_Project
         {
             this.level = level;
             LoadContent();
-            Reset(position);
+            spawnPoint = position;
+            Reset(spawnPoint);
         }
 
 
@@ -208,7 +210,7 @@ namespace Game_Programming_Project
 
             //Check if the player fell off the map
             if (Position.Y >= Game.resolution.Y)
-                this.Reset(new Vector2(100,100));
+                this.Reset(spawnPoint);
 
             // If the collision stopped us from moving, reset the velocity to zero.
             if (Position.X == previousPosition.X)

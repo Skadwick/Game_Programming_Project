@@ -26,6 +26,10 @@ namespace Game_Programming_Project
         const int BlockGridWidth = 32;
         private char[,] blockMap = new char[BlockGridWidth, BlockGridHeight];
 
+        //Specific locations within the level     
+        private Vector2 start;
+        private Point exit = new Point(-1, -1);
+
         //Player object which the user controls within the level
         public Player Player
         {
@@ -35,9 +39,6 @@ namespace Game_Programming_Project
 
         //Other sprite objects within the level
         List<Enemy> enemies = new List<Enemy>();
-
-        //Starting position of the player
-        private Vector2 start; 
 
         //Game content       
         public ContentManager Content
@@ -53,6 +54,13 @@ namespace Game_Programming_Project
         }
         private int levelIndex;
 
+        public bool ReachedExit
+        {
+            get { return reachedExit; }
+            set { reachedExit = value; }
+        }
+        private bool reachedExit;
+
 
         /// <summary>
         /// Constructor for the Level class.  serviceProvider is the Game.Services property from the
@@ -67,7 +75,7 @@ namespace Game_Programming_Project
             LevelIndex = lvlIndex;
             LoadLevel();
             LoadBlocks();
-            player = new Player(this, new Vector2(100, 100));
+            //player = new Player(this, new Vector2(100, 100));
         }
 
 
@@ -103,30 +111,6 @@ namespace Game_Programming_Project
         /// </summary>
         private void LoadBlocks()
         {
-            //Creating a 2D array of characters which determine which block goes where
-            /*
-            char[,] blockMap = { 
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'p', 'p', 'p', 'p','p', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', 'p', 'p', 'p','p', 'p', 'p', 'p','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', 'p','p', 'p', 'p', 'p','p', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', 'p','p', 'p', '-', '-','-', '-', '-', '-','-', '-', 'p', 'p','p', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-'},
-                               {'%', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '-','-', '-', '-', '@'},
-                               {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'},
-                               {'#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','-', '-', '-', '-','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#','#', '#', '#', '#'}
-                               };
-             * */
-
             //Initialize the block grid
             blocks = new Block[BlockGridWidth, BlockGridHeight];
 
@@ -165,6 +149,14 @@ namespace Game_Programming_Project
                 //Platform block
                 case 'p':
                     return CreateBlock("block2", BlockCollision.Platform);
+
+                //Player spawn
+                case 's':
+                    return SpawnPlayer(x, y);
+
+                //Level exit block
+                case 'e':
+                    return LevelExit(x, y);
 
                 //Enemy spawn
                 case '@':
@@ -207,6 +199,38 @@ namespace Game_Programming_Project
         }
 
 
+        /// <summary>
+        /// Spawns the player at the given location
+        /// </summary>
+        private Block SpawnPlayer(int x, int y)
+        {
+            start = new Vector2(x * Block.Size.X, ((y + 1) * Block.Size.Y));
+            player = new Player(this, start);
+
+            return new Block(null, BlockCollision.Passable);
+        }
+
+
+        /// <summary>
+        /// Spawns the player at the given location
+        /// </summary>
+        private Block LevelExit(int x, int y)
+        {
+            exit = GetBounds(x, y).Center;
+            return CreateBlock("exit", BlockCollision.Passable);
+        }
+
+
+
+        /// <summary>
+        /// Gets the bounding rectangle of a tile in world space
+        /// </summary>        
+        public Rectangle GetBounds(int x, int y)
+        {
+            return new Rectangle(x * Block.Width, y * Block.Height, Block.Width, Block.Height);
+        }
+
+
 
         /// <summary>
         /// Returns the collision type of a block within the grid system
@@ -236,6 +260,12 @@ namespace Game_Programming_Project
 
             //Update the player
             player.Update(gameTime, keyboardState);
+
+            //Check if player reached the exit
+            if (Player.PlayerRect.Contains(exit))
+            {
+                ExitReached();
+            }
 
             //Update each of the enemies
             foreach (Enemy enemy in enemies)
@@ -269,7 +299,16 @@ namespace Game_Programming_Project
 
             //When the player dies, do this.
             if (player.Health <= 0)
-                player.Reset(new Vector2(100, 100));
+                player.Reset(start);
+        }
+
+
+        /// <summary>
+        /// Is called once the player reaches the end of the level
+        /// </summary>
+        private void ExitReached()
+        {
+            reachedExit = true;
         }
 
 

@@ -35,6 +35,7 @@ namespace Game_Programming_Project
         public static Vector2 resolution = new Vector2(1024, 576);
         GameState gameState;
         public int levelIndex;
+        public int numLevels = 2;
 
         //Cursor variables
         Texture2D cursorTexture;
@@ -181,6 +182,16 @@ namespace Game_Programming_Project
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void Playing(GameTime gameTime)
         {
+            if (level.ReachedExit && levelIndex < numLevels)
+            {
+                levelIndex++;
+                level = new Level(Services, levelIndex);
+            }
+            else if (levelIndex >= numLevels && level.ReachedExit)
+            {
+                gameState = GameState.GameOver;              
+            }
+
             level.Update(gameTime, Keyboard.GetState());
         }
 
