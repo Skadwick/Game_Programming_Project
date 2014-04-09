@@ -19,8 +19,8 @@ namespace Game_Programming_Project.Enemies
             : base(level, position)
         {
 
-            attackVel = new Vector2(5, 0);
-            timeBetweenAttacks = 800;
+            attackVel = new Vector2(2, 0);
+            timeBetweenAttacks = 2200;
             attackDmg = 15;
             MaxVelocity = new Vector2(0.3f, 0);
 

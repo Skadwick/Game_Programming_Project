@@ -43,12 +43,19 @@ namespace Game_Programming_Project
         MouseState previousMouseState;
 
         //Interface variables
-        Button start;
+        Button play;
+        Button instructions;
+        Button continuePlaying;
+        Button playAgain;
+        Button quit;
 
         //other variables
         Texture2D startBackground;
         Texture2D background;
         Texture2D gameOverBackground;
+        Texture2D pausedBackground;
+        int lastPause = 0;
+        const int PauseDelay = 333;
 
         //Default variables
         GraphicsDeviceManager graphics;
@@ -99,11 +106,20 @@ namespace Game_Programming_Project
             background = this.Content.Load<Texture2D>(@"backgrounds/back_city");
             startBackground = this.Content.Load<Texture2D>(@"backgrounds/back_start");
             gameOverBackground = this.Content.Load<Texture2D>(@"backgrounds/back_gameover");
+            pausedBackground = this.Content.Load<Texture2D>(@"backgrounds/back_paused");
 
             //Loading interface elements
             cursorTexture = this.Content.Load<Texture2D>(@"Interface/Cursors/cursor");
-            start = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/start"),
-                this.Content.Load<Texture2D>(@"Interface/Buttons/startHvr"), new Vector2(362, 250));
+            play = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/btn_play"),
+                this.Content.Load<Texture2D>(@"Interface/Buttons/btn_playhvr"), new Vector2(362, 250));
+            instructions = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/btn_instructions"),
+                this.Content.Load<Texture2D>(@"Interface/Buttons/btn_instructionshvr"), new Vector2(362, 350)); ;
+            playAgain = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/btn_playagain"),
+                this.Content.Load<Texture2D>(@"Interface/Buttons/btn_playagainhvr"), new Vector2(362, 250)); ;
+            continuePlaying = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/btn_continueplaying"),
+                this.Content.Load<Texture2D>(@"Interface/Buttons/btn_continueplayinghvr"), new Vector2(362, 250)); ;
+            quit = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/btn_quit"),
+                this.Content.Load<Texture2D>(@"Interface/Buttons/btn_quithvr"), new Vector2(362, 450)); ;
 
             //Setting initial game state and level index
             gameState = GameState.Start;
@@ -141,16 +157,16 @@ namespace Game_Programming_Project
                     Start(gameTime, mouseState);
                     break;
 
-                case GameState.Playing: 
-                    Playing(gameTime);
+                case GameState.Playing:
+                    Playing(gameTime, keyboardState);
                     break;
 
-                case GameState.Paused: 
-                    Paused(gameTime);
+                case GameState.Paused:
+                    Paused(gameTime, mouseState, keyboardState);
                     break;
 
-                case GameState.GameOver: 
-                    GameOver(gameTime);
+                case GameState.GameOver:
+                    GameOver(gameTime, mouseState);
                     break;
                     
                 default:
@@ -167,11 +183,26 @@ namespace Game_Programming_Project
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void Start(GameTime gameTime, MouseState mouseState)
         {
+            //Update button positions
+            play.Position = new Vector2(100, 340);
+            instructions.Position = new Vector2(100, 410);
+            quit.Position = new Vector2(100, 480);
 
-            if (start.Update(gameTime, mouseState))
+            //Check if buttons are being clicked, and update them
+            if (play.Update(gameTime, mouseState))
             {
                 gameState = GameState.Playing;
                 level = new Level(Services, levelIndex);
+            }
+
+            if (instructions.Update(gameTime, mouseState))
+            {
+                
+            }
+
+            if (quit.Update(gameTime, mouseState))
+            {
+                this.Exit();
             }
 
 
@@ -182,8 +213,16 @@ namespace Game_Programming_Project
         /// 
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        private void Playing(GameTime gameTime)
+        private void Playing(GameTime gameTime, KeyboardState keyboardState)
         {
+            lastPause += gameTime.ElapsedGameTime.Milliseconds;
+
+            if (keyboardState.IsKeyDown(Keys.Escape) && lastPause > PauseDelay)
+            {
+                gameState = GameState.Paused;
+                lastPause = 0;
+            }
+
             if (level.ReachedExit && levelIndex < numLevels)
             {
                 levelIndex++;
@@ -202,8 +241,27 @@ namespace Game_Programming_Project
         /// 
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        private void Paused(GameTime gameTime)
+        private void Paused(GameTime gameTime, MouseState mouseState, KeyboardState keyboardState)
         {
+            lastPause += gameTime.ElapsedGameTime.Milliseconds;
+            continuePlaying.Position = new Vector2(100, 340);
+            quit.Position = new Vector2(100, 410);
+
+            if (keyboardState.IsKeyDown(Keys.Escape) && lastPause > PauseDelay)
+            {
+                gameState = GameState.Playing;
+                lastPause = 0;
+            }
+
+            if (continuePlaying.Update(gameTime, mouseState))
+            {
+                gameState = GameState.Playing;
+            }
+
+            if (quit.Update(gameTime, mouseState))
+            {
+                gameState = GameState.Start;
+            }
 
         }
 
@@ -212,8 +270,22 @@ namespace Game_Programming_Project
         /// 
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        private void GameOver(GameTime gameTime)
+        private void GameOver(GameTime gameTime, MouseState mouseState)
         {
+            playAgain.Position = new Vector2(100, 340);
+            quit.Position = new Vector2(100, 410);
+
+            if (playAgain.Update(gameTime, mouseState))
+            {
+                gameState = GameState.Playing;
+                levelIndex = 1;
+                level = new Level(Services, levelIndex);
+            }
+
+            if (quit.Update(gameTime, mouseState))
+            {
+                this.Exit();
+            }
 
         }
 
@@ -235,7 +307,9 @@ namespace Game_Programming_Project
             {
                 case GameState.Start:
                     spriteBatch.Draw(startBackground, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-                    start.Draw(gameTime, spriteBatch);
+                    play.Draw(gameTime, spriteBatch);
+                    instructions.Draw(gameTime, spriteBatch);
+                    quit.Draw(gameTime, spriteBatch);
                     spriteBatch.Draw(cursorTexture, cursorPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     break;
 
@@ -245,11 +319,19 @@ namespace Game_Programming_Project
                     break;
 
                 case GameState.Paused:
-                    
+                    spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    level.Draw(gameTime, spriteBatch);
+                    spriteBatch.Draw(pausedBackground, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    continuePlaying.Draw(gameTime, spriteBatch);
+                    quit.Draw(gameTime, spriteBatch);
+                    spriteBatch.Draw(cursorTexture, cursorPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     break;
 
                 case GameState.GameOver:
                     spriteBatch.Draw(gameOverBackground, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    playAgain.Draw(gameTime, spriteBatch);
+                    quit.Draw(gameTime, spriteBatch);
+                    spriteBatch.Draw(cursorTexture, cursorPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     break;
 
                 default:

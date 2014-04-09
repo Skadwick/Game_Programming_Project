@@ -208,22 +208,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interface\Buttons\start.png">
-      <Name>start</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="backgrounds\back_start.png">
       <Name>back_start</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Interface\Buttons\startHvr.png">
-      <Name>startHvr</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -236,6 +222,61 @@
     </Compile>
     <Compile Include="backgrounds\back_gameover.png">
       <Name>back_gameover</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_instructions.png">
+      <Name>btn_instructions</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_instructionshvr.png">
+      <Name>btn_instructionshvr</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_play.png">
+      <Name>btn_play</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_playagain.png">
+      <Name>btn_playagain</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_playagainhvr.png">
+      <Name>btn_playagainhvr</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_playhvr.png">
+      <Name>btn_playhvr</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_quit.png">
+      <Name>btn_quit</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_quithvr.png">
+      <Name>btn_quithvr</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_continueplaying.png">
+      <Name>btn_continueplaying</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Interface\Buttons\btn_continueplayinghvr.png">
+      <Name>btn_continueplayinghvr</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="backgrounds\back_paused.png">
+      <Name>back_paused</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -28,8 +28,8 @@ namespace Game_Programming_Project.Enemies
 
         //Attack variables
         protected Vector2 attackPos;
-        protected Vector2 attackVel = new Vector2(10, 0);
-        protected int timeBetweenAttacks = 1200;
+        protected Vector2 attackVel = new Vector2(4, 0);
+        protected int timeBetweenAttacks = 1800;
         protected int lastAttack = 0;
         protected int attackDmg = 10;
         public List<Attack> Attacks

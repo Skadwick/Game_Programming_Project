@@ -16,6 +16,11 @@ namespace Game_Programming_Project.Interface
         private Texture2D hoverTexture;
 
         //Button position
+        public Vector2 Position
+        {
+            get { return position; }
+            set { position = value; }
+        }
         private Vector2 position;
 
         //Rectangle around button
@@ -50,6 +55,9 @@ namespace Game_Programming_Project.Interface
         public bool Update(GameTime gameTime, MouseState mouseState)
         {
             Point mousePos = new Point(mouseState.X, mouseState.Y);
+
+            buttonBounds = new Rectangle((int)position.X, (int)position.Y,
+                texture.Width, texture.Height);
 
             if (buttonBounds.Contains(mousePos))
             {
