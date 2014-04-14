@@ -31,7 +31,7 @@ namespace Game_Programming_Project.Enemies
         protected Vector2 attackVel = new Vector2(4, 0);
         protected int timeBetweenAttacks = 1800;
         protected int lastAttack = 0;
-        protected int attackDmg = 10;
+        protected int attackDmg = 55;
         public List<Attack> Attacks
         {
             get { return attacks; }

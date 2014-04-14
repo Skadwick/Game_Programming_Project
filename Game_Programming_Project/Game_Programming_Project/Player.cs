@@ -167,6 +167,10 @@ namespace Game_Programming_Project
                 sprite.PlayAnimation(runAnimation);
             else
                 sprite.PlayAnimation(idleAnimation);
+
+            //Check the player's health
+            if (Health <= 0)
+                killed();
             
             direction = Vector2.Zero;
 
@@ -234,7 +238,7 @@ namespace Game_Programming_Project
 
             //Check if the player fell off the map
             if (Position.Y >= Game.resolution.Y)
-                this.Reset(spawnPoint);
+                killed();
 
             // If the collision stopped us from moving, reset the velocity to zero.
             if (Position.X == previousPosition.X)
@@ -347,6 +351,13 @@ namespace Game_Programming_Project
         public void hitByAttack(Attack attack)
         {
             this.health -= attack.Damage;
+        }
+
+
+        public void killed()
+        {
+            lives--;
+            this.Reset(spawnPoint);
         }
 
 

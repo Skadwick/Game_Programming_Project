@@ -306,15 +306,7 @@ namespace Game_Programming_Project
                 foreach (Attack remove in removeAttacks)
                     enemy.Attacks.Remove(remove);
             }
-
-
-            //When the player dies, do this.
-            if (player.Health <= 0)
-            {
-                //playTime = 0; //Reset playtime if the player dies(?)
-                player.Reset(start);
-            }
-
+            
             Camera.Instance.Update();
         }
 

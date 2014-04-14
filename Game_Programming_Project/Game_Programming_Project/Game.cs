@@ -220,12 +220,14 @@ namespace Game_Programming_Project
         {
             lastPause += gameTime.ElapsedGameTime.Milliseconds;
 
+            //Check for pause
             if (keyboardState.IsKeyDown(Keys.Escape) && lastPause > PauseDelay)
             {
                 gameState = GameState.Paused;
                 lastPause = 0;
             }
 
+            //Check if exit was reached
             if (level.ReachedExit && levelIndex < numLevels)
             {
                 levelIndex++;
@@ -236,6 +238,10 @@ namespace Game_Programming_Project
             {
                 gameState = GameState.GameOver;              
             }
+
+            //Check if player is out of lives
+            if (level.Player.Lives <= 0)
+                gameState = GameState.GameOver;
 
             level.Update(gameTime, Keyboard.GetState());
             hud.Update(gameTime, level);
