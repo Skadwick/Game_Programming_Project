@@ -13,12 +13,19 @@ namespace Game_Programming_Project
 
         //Player RPG variables
         private const int MaxHealth = 100;
+        private const int DefaultLives = 3;
 
         public int Health
         {
             get { return health; }
         }
         private int health;
+
+        public int Lives
+        {
+            get { return lives; }
+        }
+        private int lives;
 
         public bool IsAttacking
         {
@@ -107,6 +114,7 @@ namespace Game_Programming_Project
             LoadContent();
             spawnPoint = position;
             Reset(spawnPoint);
+            lives = DefaultLives;
         }
 
 

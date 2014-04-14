@@ -43,6 +43,7 @@ namespace Game_Programming_Project
         MouseState previousMouseState;
 
         //Interface variables
+        PlayerHud hud;
         Button play;
         Button instructions;
         Button continuePlaying;
@@ -110,6 +111,7 @@ namespace Game_Programming_Project
 
             //Loading interface elements
             cursorTexture = this.Content.Load<Texture2D>(@"Interface/Cursors/cursor");
+            hud = new PlayerHud(Services);
             play = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/btn_play"),
                 this.Content.Load<Texture2D>(@"Interface/Buttons/btn_playhvr"), new Vector2(362, 250));
             instructions = new Button(this.Content.Load<Texture2D>(@"Interface/Buttons/btn_instructions"),
@@ -228,6 +230,7 @@ namespace Game_Programming_Project
             {
                 levelIndex++;
                 level = new Level(Services, levelIndex);
+
             }
             else if (levelIndex >= numLevels && level.ReachedExit)
             {
@@ -235,6 +238,7 @@ namespace Game_Programming_Project
             }
 
             level.Update(gameTime, Keyboard.GetState());
+            hud.Update(gameTime, level);
         }
 
 
@@ -351,6 +355,7 @@ namespace Game_Programming_Project
             level.Draw(gameTime, spriteBatch);
             spriteBatch.End();
             spriteBatch.Begin();
+            hud.Draw(gameTime, spriteBatch);
         }
 
 

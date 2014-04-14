@@ -117,6 +117,7 @@
     <Compile Include="GameMath.cs" />
     <Compile Include="GamePhysics.cs" />
     <Compile Include="Interface\Button.cs" />
+    <Compile Include="Interface\PlayerHud.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

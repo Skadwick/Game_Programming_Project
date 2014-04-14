@@ -40,6 +40,13 @@ namespace Game_Programming_Project
         //Other sprite objects within the level
         List<Enemy> enemies = new List<Enemy>();
 
+        //Player object which the user controls within the level
+        public int PlayTime
+        {
+            get { return playTime; }
+        }
+        int playTime;
+
         //Game content       
         public ContentManager Content
         {
@@ -73,6 +80,7 @@ namespace Game_Programming_Project
         {
             content = new ContentManager(serviceProvider, "Content");
             LevelIndex = lvlIndex;
+            playTime = 0;
             LoadLevel();
             LoadBlocks();
             //player = new Player(this, new Vector2(100, 100));
@@ -261,6 +269,9 @@ namespace Game_Programming_Project
             //Update the player
             player.Update(gameTime, keyboardState);
 
+            //Update the game time
+            playTime += gameTime.ElapsedGameTime.Milliseconds;
+
             //Check if player reached the exit
             if (Player.PlayerRect.Contains(exit))
             {
@@ -299,7 +310,10 @@ namespace Game_Programming_Project
 
             //When the player dies, do this.
             if (player.Health <= 0)
+            {
+                //playTime = 0; //Reset playtime if the player dies(?)
                 player.Reset(start);
+            }
 
             Camera.Instance.Update();
         }
