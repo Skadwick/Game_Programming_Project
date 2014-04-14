@@ -42,10 +42,10 @@ namespace Game_Programming_Project
             //Camera stays withing the boundaries of the level
             if (position.X < 0)
                 position.X = 0;
-            if (position.Y < 0)
+            if (position.Y > 0)
                 position.Y = 0;
-            if (position.X > 127 * 32)
-                position.X = 127 * 32;
+            if (position.X + 1024 > 128 * 32)
+                position.X = (128 * 32) - 1024;
         }
 
         public void Update()
