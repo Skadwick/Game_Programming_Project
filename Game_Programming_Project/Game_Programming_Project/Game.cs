@@ -103,7 +103,7 @@ namespace Game_Programming_Project
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //Loading backgrounds
-            background = this.Content.Load<Texture2D>(@"backgrounds/back_main");
+            background = this.Content.Load<Texture2D>(@"backgrounds/back_city");
             startBackground = this.Content.Load<Texture2D>(@"backgrounds/back_start");
             gameOverBackground = this.Content.Load<Texture2D>(@"backgrounds/back_gameover");
             pausedBackground = this.Content.Load<Texture2D>(@"backgrounds/back_paused");
@@ -317,14 +317,12 @@ namespace Game_Programming_Project
 
                 case GameState.Playing:
                     spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-                    spriteBatch.End();
-                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Camera.Instance.ViewMatrix);
-                    level.Draw(gameTime, spriteBatch);
+                    drawLevel(gameTime, spriteBatch);
                     break;
 
                 case GameState.Paused:
                     spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-                    level.Draw(gameTime, spriteBatch);
+                    drawLevel(gameTime, spriteBatch);
                     spriteBatch.Draw(pausedBackground, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
                     continuePlaying.Draw(gameTime, spriteBatch);
                     quit.Draw(gameTime, spriteBatch);
@@ -345,6 +343,16 @@ namespace Game_Programming_Project
             spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        private void drawLevel(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Camera.Instance.ViewMatrix);
+            level.Draw(gameTime, spriteBatch);
+            spriteBatch.End();
+            spriteBatch.Begin();
+        }
+
 
     }
 
