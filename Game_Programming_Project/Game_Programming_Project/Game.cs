@@ -123,7 +123,7 @@ namespace Game_Programming_Project
 
             //Setting initial game state and level index
             gameState = GameState.Start;
-            levelIndex = 3;
+            levelIndex = 1;
         }
 
 
@@ -192,7 +192,7 @@ namespace Game_Programming_Project
             if (play.Update(gameTime, mouseState))
             {
                 gameState = GameState.Playing;
-                levelIndex = 3;
+                levelIndex = 1;
                 level = new Level(Services, levelIndex);
             }
 

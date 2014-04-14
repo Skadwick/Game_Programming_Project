@@ -39,10 +39,10 @@ namespace Game_Programming_Project
         private Vector2 spawnPoint;
         private Vector2 direction;
         private float previousBottom;
-        private int jumpTime = 0;
+        private float previousTop;
 
         private Vector2 MaxVelocity = new Vector2(5, 5);
-        private int MaxJumpTime = 200; //Milliseconds
+        private float jumpVel = -7.5f;
 
         public Vector2 Position
         {
@@ -70,6 +70,12 @@ namespace Game_Programming_Project
             get { return isJumping; }
         }
         bool isJumping;
+
+        public bool WasJumping
+        {
+            get { return wasJumping; }
+        }
+        bool wasJumping;
 
         //Reference to the level the player is on
         public Level Level
@@ -147,7 +153,7 @@ namespace Game_Programming_Project
             //Play the proper animation
             if (IsAttacking)
                 sprite.PlayAnimation(attackAnimation);
-            else if (isJumping)
+            else if (isJumping || wasJumping)
                 sprite.PlayAnimation(jumpAnimation);
             else if (Velocity.X != 0)
                 sprite.PlayAnimation(runAnimation);
@@ -189,7 +195,8 @@ namespace Game_Programming_Project
                 isAttacking = false;
             }
 
-            isJumping = keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W);
+            isJumping = (keyboardState.IsKeyDown(Keys.Space) || keyboardState.IsKeyDown(Keys.Up) || 
+                keyboardState.IsKeyDown(Keys.W) ) && !wasJumping;
         }
 
 
@@ -203,6 +210,11 @@ namespace Game_Programming_Project
             //Update velocity
             velocity.X = direction.X * MaxVelocity.X;
             velocity.Y = GamePhysics.GetFallSpeed(Velocity.Y, gameTime);
+
+            if (isStanding)
+            {
+                velocity.Y = 0;
+            }
 
             //Check for jumping
             velocity.Y = Jump(velocity.Y, gameTime);
@@ -230,12 +242,15 @@ namespace Game_Programming_Project
         /// </summary>
         private float Jump(float yVel, GameTime gameTime)
         {
-            if (IsJumping && jumpTime < MaxJumpTime)
+            if (IsJumping && !wasJumping)
             {
-                jumpTime += gameTime.ElapsedGameTime.Milliseconds;
-                yVel = -5;
-                sprite.PlayAnimation(jumpAnimation);
+                wasJumping = true;
+                yVel = jumpVel;
             }
+
+            if (wasJumping)
+                sprite.PlayAnimation(jumpAnimation);
+
             return yVel;
         }
 
@@ -279,6 +294,13 @@ namespace Game_Programming_Project
                                 if (previousBottom <= blockRect.Top)
                                 {
                                     isStanding = true;
+                                    wasJumping = false;
+                                }
+
+                                //Check if player is colliding with bottom of an impassable block
+                                if (previousTop >= blockRect.Bottom && blockCollision == BlockCollision.Impassable)
+                                {
+                                    velocity.Y = 0;
                                 }
 
                                 // Ignore platforms, unless we are on the ground
@@ -286,9 +308,7 @@ namespace Game_Programming_Project
                                 {
                                     //resolve the collision along the Y axis
                                     Position = new Vector2(Position.X, Position.Y + depth.Y);
-                                    velocity.Y = 0;
-                                    jumpTime = 0;
-
+                                    
                                     //Update bounds
                                     bounds = PlayerRect;
                                 }
@@ -309,6 +329,7 @@ namespace Game_Programming_Project
 
             // Save the new bounds bottom.
             previousBottom = bounds.Bottom;
+            previousTop = bounds.Top;
         }
 
 
