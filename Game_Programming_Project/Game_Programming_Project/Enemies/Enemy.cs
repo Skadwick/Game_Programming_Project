@@ -40,6 +40,7 @@ namespace Game_Programming_Project.Enemies
 
 
         //Enemy movement and position
+        protected int attackRange = 300;
         protected Vector2 spawnLocation;
         protected Vector2 direction;
         protected float previousBottom;
@@ -61,12 +62,21 @@ namespace Game_Programming_Project.Enemies
         protected Vector2 velocity;
 
 
-        //Player state
+        //Enemy state
         public bool IsStanding
         {
             get { return isStanding; }
         }
         protected bool isStanding;
+
+        public bool Alerted
+        {
+            get { return alerted; }
+        }
+        protected bool alerted;
+
+        protected bool hitWall = false;
+        protected bool willFall = false;
 
         //Reference to the level the enemy is on
         public Level Level
@@ -107,6 +117,7 @@ namespace Game_Programming_Project.Enemies
         public void Spawn(Vector2 position)
         {
             Position = position;
+            direction.X = -1;
             Velocity = Vector2.Zero;
             sprite.PlayAnimation(idleAnimation);
         }
@@ -148,7 +159,7 @@ namespace Game_Programming_Project.Enemies
             else
                 sprite.PlayAnimation(idleAnimation);
 
-            direction = Vector2.Zero;
+            //direction = Vector2.Zero;
         }
 
 
@@ -159,21 +170,59 @@ namespace Game_Programming_Project.Enemies
         {
             Vector2 playerPos = Level.Player.Position;
             lastAttack += gameTime.ElapsedGameTime.Milliseconds;
+            int distance = (int)(playerPos.X - position.X);
 
-            //Face the player
-            if (playerPos.X > Position.X)
-                direction.X = 1;
-            else if (playerPos.X < Position.X)
-                direction.X = -1;
-            else
-                direction.X = 0;
+            bool inRange = (Math.Abs(distance) < attackRange);
 
-            if (lastAttack >= timeBetweenAttacks)
+            bool facingPlayer = ((playerPos.X < position.X && direction.X < 0) ||
+                (playerPos.X > position.X && direction.X > 0));
+
+            bool inView = (playerPos.Y > (position.Y - 64) &&
+                playerPos.Y < (position.Y + 128));
+
+            //Check if the enemy can see the player or not
+            if (inRange && facingPlayer && inView)                
             {
-                attackVel = new Vector2(10, 0);
-                Attack();
-                lastAttack = 0;
+                alerted = true;
             }
+            else if (alerted && (!inRange || !inView))
+            {
+                alerted = false;
+            }
+
+
+            if (alerted)
+            {
+                //Face the player
+                if (playerPos.X > Position.X)
+                    direction.X = 1;
+                else if (playerPos.X < Position.X)
+                    direction.X = -1;
+                else
+                    direction.X = 0;
+
+                //Attack the player
+                if (lastAttack >= timeBetweenAttacks)
+                {
+                    attackVel = new Vector2(10, 0);
+                    Attack();
+                    lastAttack = 0;
+                }
+            }
+
+            //If enemy cannot see player, then just patrol the area
+            else
+            {
+                if (hitWall || willFall)
+                {
+                    direction.X *= -1;
+                    hitWall = false;
+                    willFall = false;
+                }
+
+            }
+
+           
 
         }
 
@@ -271,6 +320,7 @@ namespace Game_Programming_Project.Enemies
                             {
                                 // Resolve the collision along the X axis.
                                 Position = new Vector2(Position.X + depth.X, Position.Y);
+                                hitWall = true;
 
                                 //Update bounds
                                 bounds = EnemyRect;
