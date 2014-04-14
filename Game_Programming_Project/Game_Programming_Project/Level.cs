@@ -1,10 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
-using System.IO;
 using Microsoft.Xna.Framework.Input;
 using Game_Programming_Project.Enemies;
 
@@ -23,7 +23,7 @@ namespace Game_Programming_Project
         //Terrain structure of the level
         private Block[,] blocks; //2D array
         const int BlockGridHeight = 18;
-        const int BlockGridWidth = 32;
+        const int BlockGridWidth = 128;
         private char[,] blockMap = new char[BlockGridWidth, BlockGridHeight];
 
         //Specific locations within the level     
@@ -300,6 +300,8 @@ namespace Game_Programming_Project
             //When the player dies, do this.
             if (player.Health <= 0)
                 player.Reset(start);
+
+            Camera.Instance.Update();
         }
 
 

@@ -35,7 +35,7 @@ namespace Game_Programming_Project
         public static Vector2 resolution = new Vector2(1024, 576);
         GameState gameState;
         public int levelIndex;
-        public int numLevels = 2;
+        public int numLevels = 3;
 
         //Cursor variables
         Texture2D cursorTexture;
@@ -103,7 +103,7 @@ namespace Game_Programming_Project
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //Loading backgrounds
-            background = this.Content.Load<Texture2D>(@"backgrounds/back_city");
+            background = this.Content.Load<Texture2D>(@"backgrounds/back_main");
             startBackground = this.Content.Load<Texture2D>(@"backgrounds/back_start");
             gameOverBackground = this.Content.Load<Texture2D>(@"backgrounds/back_gameover");
             pausedBackground = this.Content.Load<Texture2D>(@"backgrounds/back_paused");
@@ -123,7 +123,7 @@ namespace Game_Programming_Project
 
             //Setting initial game state and level index
             gameState = GameState.Start;
-            levelIndex = 1;
+            levelIndex = 3;
         }
 
 
@@ -192,6 +192,7 @@ namespace Game_Programming_Project
             if (play.Update(gameTime, mouseState))
             {
                 gameState = GameState.Playing;
+                levelIndex = 3;
                 level = new Level(Services, levelIndex);
             }
 
@@ -299,8 +300,9 @@ namespace Game_Programming_Project
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
+            spriteBatch.Begin();
+           
 
             //Update the game based on which state the game is currently in
             switch (gameState)
@@ -315,6 +317,8 @@ namespace Game_Programming_Project
 
                 case GameState.Playing:
                     spriteBatch.Draw(background, Vector2.Zero, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+                    spriteBatch.End();
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Camera.Instance.ViewMatrix);
                     level.Draw(gameTime, spriteBatch);
                     break;
 
@@ -337,8 +341,6 @@ namespace Game_Programming_Project
                 default:
                     throw new Exception("Invalid GameState.");
             }
-
-
 
             spriteBatch.End();
             base.Draw(gameTime);

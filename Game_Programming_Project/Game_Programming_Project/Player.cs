@@ -155,6 +155,10 @@ namespace Game_Programming_Project
                 sprite.PlayAnimation(idleAnimation);
             
             direction = Vector2.Zero;
+
+            //Sets the focal point for the camera by getting the coordinates of the player relative to the screen
+            //Moves with the player in both the x and y directions
+            Camera.Instance.SetFocalPoint(new Vector2(position.X, position.Y));
         }
 
 
