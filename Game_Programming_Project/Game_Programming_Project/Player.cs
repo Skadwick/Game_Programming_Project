@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Game_Programming_Project.Enemies;
 
 namespace Game_Programming_Project
 {
@@ -32,6 +33,19 @@ namespace Game_Programming_Project
             get { return isAttacking; }
         }
         private bool isAttacking;
+
+        public List<Attack> Attacks
+        {
+            get { return attacks; }
+        }
+        protected List<Attack> attacks = new List<Attack>();
+
+        private Vector2 attackPos;
+        private Vector2 attackVel = new Vector2(0, 0);
+        private int attackDmg = 35;
+        private int attackTime = 25;
+        private int attackDelay = 100;
+        private int lastAttack;
 
 
         //Animations
@@ -137,7 +151,7 @@ namespace Game_Programming_Project
         public void LoadContent()
         {
             idleAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/idle"), 0.1f, true);
-            attackAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/attack"), 0.1f, true);
+            attackAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/attacking"), 0.1f, true);
             runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/running"), 0.12f, true);
             jumpAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/jumping"), 0.1f, true);
 
@@ -158,15 +172,36 @@ namespace Game_Programming_Project
             GetInput(keyboardState);
             MovePlayer(gameTime);
 
-            //Play the proper animation
+            lastAttack += gameTime.ElapsedGameTime.Milliseconds;
+
+            //Check player state
             if (IsAttacking)
+            {
                 sprite.PlayAnimation(attackAnimation);
+                if (lastAttack >= attackDelay)
+                {
+                    lastAttack = 0;
+                    Attack();
+                }
+            }
             else if (isJumping || wasJumping)
                 sprite.PlayAnimation(jumpAnimation);
             else if (Velocity.X != 0)
                 sprite.PlayAnimation(runAnimation);
             else
                 sprite.PlayAnimation(idleAnimation);
+
+            //Update player attacks
+            List<Attack> removeAttack = new List<Attack>();
+            foreach (Attack attack in attacks)
+            {
+                attack.Update(gameTime);
+                if (attack.AttackTime > attackTime)
+                    removeAttack.Add(attack);
+            }
+
+            foreach (Attack remove in removeAttack)
+                attacks.Remove(remove);
 
             //Check the player's health
             if (Health <= 0)
@@ -189,12 +224,12 @@ namespace Game_Programming_Project
             if ((Keyboard.GetState().IsKeyDown(Keys.Left) ||
                 Keyboard.GetState().IsKeyDown(Keys.A)))
             {
-                direction.X -= 1;
+                direction.X = -1;
             }
             else if ((Keyboard.GetState().IsKeyDown(Keys.Right) ||
                 Keyboard.GetState().IsKeyDown(Keys.D)))
             {
-                direction.X += 1;
+                direction.X = 1;
             }
 
             //Check  if player is attacking
@@ -264,6 +299,21 @@ namespace Game_Programming_Project
                 sprite.PlayAnimation(jumpAnimation);
 
             return yVel;
+        }
+
+
+        /// <summary>
+        /// sdfs
+        /// </summary>
+        protected virtual void Attack()
+        {
+            //Create the animation to be used by the attack
+            Animation attackAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/attack"), 0.1f, true);
+
+            //Calculate position and velocity
+            attackPos = Position;
+            //attackVel *= direction;
+            attacks.Add(new Attack(attackAnimation, attackPos, attackVel, attackDmg));
         }
 
 
@@ -371,6 +421,10 @@ namespace Game_Programming_Project
                 flip = SpriteEffects.FlipHorizontally;
             else if (Velocity.X < 0)
                 flip = SpriteEffects.None;
+
+            //Draw player attacks
+            foreach (Attack attack in attacks)
+                attack.Draw(gameTime, spriteBatch);
 
             // Draw that sprite.
             sprite.Draw(gameTime, spriteBatch, Position, flip);

@@ -38,7 +38,7 @@ namespace Game_Programming_Project
         Player player;
 
         //Other sprite objects within the level
-        List<Enemy> enemies = new List<Enemy>();
+        public List<Enemy> enemies = new List<Enemy>();
 
         //Player object which the user controls within the level
         public int PlayTime
@@ -279,9 +279,15 @@ namespace Game_Programming_Project
             }
 
             //Update each of the enemies
+            List<Enemy> removeEnemy = new List<Enemy>();
             foreach (Enemy enemy in enemies)
             {
                 enemy.Update(gameTime);
+
+                if (enemy.Health <= 0)
+                {
+                    removeEnemy.Add(enemy);
+                }
 
                 List<Attack> removeAttacks = new List<Attack>();
 
@@ -294,17 +300,29 @@ namespace Game_Programming_Project
                         removeAttacks.Add(enemyAttack);
                     }
 
-                    //Check if the attack is off the screen
-                    if (enemyAttack.Position.X < 0 || enemyAttack.Position.X > Game.resolution.X ||
-                        enemyAttack.Position.Y < 0 || enemyAttack.Position.Y > Game.resolution.Y)
+                   
+                }
+                
+                //Check if any of the player's attacks hit the enemy
+                foreach (Attack playerAttack in player.Attacks)
+                {
+                    if (enemy.EnemyRect.Intersects(playerAttack.EnemyRect))
                     {
-                        removeAttacks.Add(enemyAttack);
+                        enemy.hitByAttack(playerAttack);
+                        removeAttacks.Add(playerAttack);
                     }
                 }
 
                 //Delete the necessary attacks
                 foreach (Attack remove in removeAttacks)
+                {
                     enemy.Attacks.Remove(remove);
+                    player.Attacks.Remove(remove);
+                }
+            }
+            foreach (Enemy remove in removeEnemy)
+            {
+                enemies.Remove(remove);
             }
             
             Camera.Instance.Update();

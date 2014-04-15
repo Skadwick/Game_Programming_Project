@@ -12,9 +12,12 @@ namespace Game_Programming_Project.Enemies
     class Enemy
     {
 
-        //Default variables
-
-
+        //RPG variables
+        public int Health
+        {
+            get { return health;  }
+        }
+        protected int health = 100;
 
         //Animations
         protected Animation idleAnimation;
@@ -29,9 +32,9 @@ namespace Game_Programming_Project.Enemies
         //Attack variables
         protected Vector2 attackPos;
         protected Vector2 attackVel = new Vector2(4, 0);
-        protected int timeBetweenAttacks = 1800;
+        protected int timeBetweenAttacks = 400;
         protected int lastAttack = 0;
-        protected int attackDmg = 55;
+        protected int attackDmg = 5;
         public List<Attack> Attacks
         {
             get { return attacks; }
@@ -258,9 +261,18 @@ namespace Game_Programming_Project.Enemies
 
             //Calculate position and velocity
             attackPos = Position;
-            attackPos.Y -= 45;
+            attackPos.Y -= 38;
             attackVel *= direction;
             attacks.Add(new Attack(attackAnimation, attackPos, attackVel, attackDmg));
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void hitByAttack(Attack attack)
+        {
+            this.health -= attack.Damage;
         }
 
 

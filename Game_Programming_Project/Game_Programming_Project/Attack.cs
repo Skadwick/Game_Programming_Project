@@ -36,6 +36,12 @@ namespace Game_Programming_Project
         }
         Vector2 velocity;
 
+        public int AttackTime
+        {
+            get { return attackTime; }
+        }
+        int attackTime;
+
 
         //Rectangle for the attack hitbox
         private Rectangle attackBounds;
@@ -73,6 +79,7 @@ namespace Game_Programming_Project
         /// </summary>
         public void Update(GameTime gameTime)
         {
+            attackTime += gameTime.ElapsedGameTime.Milliseconds;
             position += velocity;
         }
 
