@@ -35,7 +35,7 @@ namespace Game_Programming_Project
         public static Vector2 resolution = new Vector2(1024, 576);
         GameState gameState;
         public int levelIndex;
-        public int numLevels = 3;
+        public int numLevels = 2;
 
         //Cursor variables
         Texture2D cursorTexture;
